@@ -31,7 +31,7 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const USERS_PER_PAGE = 3; // Số lượng người dùng trên mỗi trang
+  const USERS_PER_PAGE = 10; // Số lượng người dùng trên mỗi trang
 
   // Sorting state
   type SortKey = "name" | "email" | "dept" | "role" | "status";

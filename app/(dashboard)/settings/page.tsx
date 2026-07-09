@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppStore, useAccountStore } from "@/lib/store";
-import { Settings, User, Bell, Paintbrush, Cpu, Shield, Check, Info, Key, RefreshCw, AlertCircle, CheckCircle2, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { Settings, User, Bell, Paintbrush, Cpu, Shield, Check, Info, Key, RefreshCw, AlertCircle, CheckCircle2, Trash2, ExternalLink, Loader2, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { cn, formatRelativeTime } from "@/lib/utils";
@@ -30,6 +30,12 @@ export default function SettingsPage() {
   const [oauthStep, setOauthStep] = useState(1);
   const [emailInput, setEmailInput] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  // State for new account request modal
+  const [requestAccountModalOpen, setRequestAccountModalOpen] = useState(false);
+  const [requestFormProvider, setRequestFormProvider] = useState<string | null>(null);
+  const [requestFormEmail, setRequestFormEmail] = useState(user.email); // Default to user's email, but editable
+  const [requestFormReason, setRequestFormReason] = useState("");
 
   // Sync hash in URL with active settings tab
   useEffect(() => {
@@ -85,6 +91,21 @@ export default function SettingsPage() {
     disconnectAccount(id);
     setConfirmDeleteId(null);
     addNotification("Hủy kết nối", "Đã xóa liên kết tài khoản thành công.");
+  };
+
+  const handleSendAccountRequest = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!requestFormProvider || !requestFormEmail || !requestFormReason.trim()) {
+      addNotification("Lỗi", "Vui lòng điền đầy đủ thông tin yêu cầu.");
+      return;
+    }
+    // Simulate sending request to admin
+    addNotification("Yêu cầu đã gửi", `Yêu cầu thêm tài khoản ${requestFormEmail} (${requestFormProvider}) đã được gửi đến Admin để phê duyệt.`);
+    setRequestAccountModalOpen(false);
+    setRequestFormProvider(null);
+    setRequestFormEmail(user.email);
+    setRequestFormReason("");
+    // In a real app, you would send this data to your backend
   };
 
   const handleSavePassword = (e: React.FormEvent) => {
@@ -536,12 +557,7 @@ export default function SettingsPage() {
                         {/* Card bottom actions */}
                         <div className="mt-4 pt-3 border-t border-border/60 flex justify-end">
                           {providerConns.length > 0 ? (
-                            <button
-                              onClick={() => handleStartConnect(provKey)}
-                              className="px-2.5 py-1 text-[10px] font-bold text-primary hover:bg-primary/5 rounded border border-primary/20 cursor-pointer transition-colors"
-                            >
-                              + Liên kết tài khoản khác
-                            </button>
+                            null // Removed the "Liên kết tài khoản khác" button
                           ) : (
                             <button
                               onClick={() => handleStartConnect(provKey)}
@@ -556,6 +572,15 @@ export default function SettingsPage() {
                   })}
                 </div>
               )}
+              <div className="mt-6 pt-4 border-t border-border/60 flex justify-end">
+                        <button
+                          onClick={() => setRequestAccountModalOpen(true)}
+                          className="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer select-none"
+                        >
+                          Yêu cầu thêm tài khoản mới
+                        </button>
+              </div> {/* This closes the div wrapping the button */}
+
             </div>
           )}
         </div>
@@ -635,6 +660,85 @@ export default function SettingsPage() {
                 )}
               </div>
             )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      {/* Request New Account Modal Dialog */}
+      <Dialog.Root open={requestAccountModalOpen} onOpenChange={setRequestAccountModalOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 animate-fade-in" />
+          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-card border border-border shadow-premium-lg rounded-xl p-6 outline-none z-50">
+            <div className="flex items-center justify-between mb-4">
+              <Dialog.Title className="text-sm font-bold text-foreground">Yêu cầu thêm tài khoản mới</Dialog.Title>
+              <Dialog.Close asChild>
+                <button className="p-1 rounded-md hover:bg-secondary text-muted-foreground transition-colors">
+                  <X className="h-4 w-4" />
+                </button>
+              </Dialog.Close>
+            </div>
+            
+            <form onSubmit={handleSendAccountRequest} className="space-y-4">
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Vui lòng điền thông tin tài khoản bạn muốn liên kết và lý do nghiệp vụ. Yêu cầu sẽ được gửi đến Admin để phê duyệt.
+              </p>
+              
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-muted-foreground">Nhà cung cấp dịch vụ</label>
+                <select
+                  value={requestFormProvider || ""}
+                  onChange={(e) => setRequestFormProvider(e.target.value)}
+                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground cursor-pointer"
+                >
+                  <option value="" disabled>Chọn nhà cung cấp</option>
+                  {allProviders.map(provKey => {
+                    const detail = providerDetails[provKey as keyof typeof providerDetails];
+                    return (
+                      <option key={provKey} value={provKey}>{detail.name}</option>
+                    );
+                  })}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-muted-foreground">Địa chỉ Email tài khoản</label>
+                <input
+                  type="email"
+                  value={requestFormEmail}
+                  onChange={(e) => setRequestFormEmail(e.target.value)}
+                  placeholder="Ví dụ: ten.email@congty.vn"
+                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-muted-foreground">Lý do yêu cầu (nghiệp vụ)</label>
+                <textarea
+                  value={requestFormReason}
+                  onChange={(e) => setRequestFormReason(e.target.value)}
+                  placeholder="Ví dụ: Cần truy cập dữ liệu từ tài khoản này để phân tích báo cáo dự án X."
+                  rows={3}
+                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground resize-y"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-border/60">
+                <Dialog.Close asChild>
+                  <button
+                    type="button"
+                    className="px-3 py-1.5 rounded-lg border border-border hover:bg-secondary text-xs font-bold cursor-pointer"
+                  >
+                    Hủy bỏ
+                  </button>
+                </Dialog.Close>
+                <button
+                  type="submit"
+                  className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer"
+                >
+                  Gửi yêu cầu
+                </button>
+              </div>
+            </form>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
