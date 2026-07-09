@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { User, UserRole, Conversation, Message, ConnectedAccount, Workflow, PromptTemplate, KnowledgeDoc } from "../types";
 import { mockUser, mockConversations, mockAccounts, mockWorkflows, mockPrompts, mockKnowledgeDocs } from "../mock-data";
 
@@ -14,27 +15,35 @@ interface AppState {
   addNotification: (title: string, desc: string) => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  user: mockUser,
-  setRole: (role) => set((state) => ({ user: { ...state.user, role } })),
-  sidebarCollapsed: false,
-  toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
-  setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
-  notifications: [
-    { id: "n1", title: "Workflow hoàn thành", desc: "Tự động hóa Đồng bộ và Kiểm tra Tài liệu Pháp lý mới đã chạy thành công.", time: "45 phút trước", read: false },
-    { id: "n2", title: "Lỗi kết nối Salesforce CRM", desc: "OAuth token hết hạn. Cần xác thực lại tài khoản.", time: "3 giờ trước", read: false },
-    { id: "n3", title: "Hợp đồng mới được tải lên", desc: "Trần Thị Lan đã cập nhật Hợp đồng nguyên tắc đại lý 2026.", time: "Hôm qua", read: true }
-  ],
-  markAllNotificationsRead: () => set((state) => ({
-    notifications: state.notifications.map((n) => ({ ...n, read: true }))
-  })),
-  addNotification: (title, desc) => set((state) => ({
-    notifications: [
-      { id: Math.random().toString(), title, desc, time: "Vừa xong", read: false },
-      ...state.notifications
-    ]
-  }))
-}));
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      user: mockUser,
+      setRole: (role) => set((state) => ({ user: { ...state.user, role } })),
+      sidebarCollapsed: false,
+      toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+      setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
+      notifications: [
+        { id: "n1", title: "Workflow hoàn thành", desc: "Tự động hóa Đồng bộ và Kiểm tra Tài liệu Pháp lý mới đã chạy thành công.", time: "45 phút trước", read: false },
+        { id: "n2", title: "Lỗi kết nối Salesforce CRM", desc: "OAuth token hết hạn. Cần xác thực lại tài khoản.", time: "3 giờ trước", read: false },
+        { id: "n3", title: "Hợp đồng mới được tải lên", desc: "Trần Thị Lan đã cập nhật Hợp đồng nguyên tắc đại lý 2026.", time: "Hôm qua", read: true }
+      ],
+      markAllNotificationsRead: () => set((state) => ({
+        notifications: state.notifications.map((n) => ({ ...n, read: true }))
+      })),
+      addNotification: (title, desc) => set((state) => ({
+        notifications: [
+          { id: Math.random().toString(), title, desc, time: "Vừa xong", read: false },
+          ...state.notifications
+        ]
+      }))
+    }),
+    {
+      name: "app-store",
+      partialize: (state) => ({ user: state.user }),
+    }
+  )
+);
 
 // 2. Chat Store: Conversations list, active chat, streaming, sources
 interface ChatState {
@@ -278,10 +287,11 @@ interface AccountState {
   connectingProvider: string | null;
   connectAccount: (provider: string, email: string, name: string) => Promise<void>;
   disconnectAccount: (id: string) => void;
+  toggleAccountActive: (id: string) => void;
 }
 
 export const useAccountStore = create<AccountState>((set) => ({
-  accounts: mockAccounts,
+  accounts: mockAccounts.map(a => ({ ...a, isActive: true })),
   isConnecting: false,
   connectingProvider: null,
   connectAccount: async (provider, email, name) => {
@@ -296,16 +306,22 @@ export const useAccountStore = create<AccountState>((set) => ({
       email,
       status: "connected",
       lastSync: new Date(),
-      permissions: ["Đọc dữ liệu", "Quản lý tệp", "Đồng bộ hóa tự động"]
+      permissions: ["Đọc dữ liệu", "Quản lý tệp", "Đồng bộ hóa tự động"],
+      isActive: true
     };
 
-    set((state) => ({
-      accounts: state.accounts.some((a) => a.provider === provider)
-        ? state.accounts.map((a) => a.provider === provider ? { ...a, status: "connected", email, name, lastSync: new Date() } : a)
-        : [...state.accounts, newAcc],
-      isConnecting: false,
-      connectingProvider: null
-    }));
+    set((state) => {
+      const existing = state.accounts.find((a) => a.provider === provider && a.email === email);
+      const nextAccounts = existing
+        ? state.accounts.map((a) => a.id === existing.id ? { ...a, status: "connected" as const, name, lastSync: new Date() } : a)
+        : [...state.accounts, newAcc];
+      
+      return {
+        accounts: nextAccounts,
+        isConnecting: false,
+        connectingProvider: null
+      };
+    });
 
     useAppStore.getState().addNotification(
       "Kết nối tài khoản thành công",
@@ -323,7 +339,10 @@ export const useAccountStore = create<AccountState>((set) => ({
     return {
       accounts: state.accounts.filter((a) => a.id !== id)
     };
-  })
+  }),
+  toggleAccountActive: (id) => set((state) => ({
+    accounts: state.accounts.map((a) => a.id === id ? { ...a, isActive: a.isActive === false ? true : false } : a)
+  }))
 }));
 
 // 5. Command Palette Store

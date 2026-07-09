@@ -42,6 +42,7 @@ export interface ConnectedAccount {
   status: "connected" | "syncing" | "error";
   lastSync: Date;
   permissions: string[];
+  isActive?: boolean; // Toggles whether this account's files are actively searched in the Knowledge Base
 }
 
 export interface KnowledgeDoc {
@@ -55,6 +56,8 @@ export interface KnowledgeDoc {
   tags: string[];
   content: string; // Mock preview text
   folderPath?: string; // e.g. "Kế hoạch", "Báo cáo"
+  appSource?: string; // e.g. "Google Drive", "OneDrive", "ERP Odoo", "Salesforce"
+  accountId?: string; // Links this document to a specific ConnectedAccount id
 }
 
 export interface WorkflowStep {

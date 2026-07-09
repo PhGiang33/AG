@@ -1,21 +1,50 @@
 "use client";
 
-import { useAppStore } from "@/lib/store";
-import { Settings, User, Bell, Paintbrush, Cpu, Shield, Check, Info } from "lucide-react";
-import { useState } from "react";
+import { useAppStore, useAccountStore } from "@/lib/store";
+import { Settings, User, Bell, Paintbrush, Cpu, Shield, Check, Info, Key, RefreshCw, AlertCircle, CheckCircle2, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { cn } from "@/lib/utils";
+import { cn, formatRelativeTime } from "@/lib/utils";
+import * as Dialog from "@radix-ui/react-dialog";
 
 export default function SettingsPage() {
   const { user, setRole, addNotification } = useAppStore();
   const { theme, setTheme } = useTheme();
   
-  const [activeTab, setActiveTab] = useState<"profile" | "theme" | "notification" | "ai" | "demo">("profile");
+  const { accounts, isConnecting, connectingProvider, connectAccount, disconnectAccount, toggleAccountActive } = useAccountStore();
+  
+  const [activeTab, setActiveTab] = useState<"profile" | "theme" | "notification" | "ai" | "accounts">("profile");
   
   const [nameInput, setNameInput] = useState(user.name);
   const [deptInput, setDeptInput] = useState(user.department || "Ban Công Nghệ Thông Tin");
   const [llmPref, setLlmPref] = useState("gpt-4o");
   const [notifSound, setNotifSound] = useState(true);
+
+  // Accounts state ported
+  const [accountsLoading, setAccountsLoading] = useState(true);
+  const [oauthModalOpen, setOauthModalOpen] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
+  const [oauthStep, setOauthStep] = useState(1);
+  const [emailInput, setEmailInput] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  // Sync hash in URL with active settings tab
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash;
+      if (hash === "#accounts") {
+        setActiveTab("accounts");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "accounts") {
+      setAccountsLoading(true);
+      const timer = setTimeout(() => setAccountsLoading(false), 600);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab]);
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,12 +52,101 @@ export default function SettingsPage() {
     alert("Đã lưu cài đặt hồ sơ cá nhân!");
   };
 
+  const handleStartConnect = (provider: string) => {
+    setSelectedProvider(provider);
+    setEmailInput(
+      provider === "google"
+        ? "khang.nguyen@vinacorp.vn"
+        : provider === "microsoft"
+        ? "khang.n@vinacorp.onmicrosoft.com"
+        : `khang.nguyen@${provider}.vinacorp.vn`
+    );
+    setOauthStep(1);
+    setOauthModalOpen(true);
+  };
+
+  const handleRunOauthFlow = async () => {
+    setOauthStep(2); // Show connecting status
+    await connectAccount(
+      selectedProvider!,
+      emailInput,
+      selectedProvider === "google" ? "Google Workspace VinaCorp" : `${selectedProvider?.toUpperCase()} Account`
+    );
+    setOauthStep(3); // Success status
+    addNotification("Kết nối tài khoản", `Đã liên kết dịch vụ ${selectedProvider?.toUpperCase()} thành công.`);
+    setTimeout(() => {
+      setOauthModalOpen(false);
+    }, 1500);
+  };
+
+  const handleDeleteConfirm = (id: string) => {
+    disconnectAccount(id);
+    setConfirmDeleteId(null);
+    addNotification("Hủy kết nối", "Đã xóa liên kết tài khoản thành công.");
+  };
+
+  const providerDetails = {
+    google: {
+      name: "Google Workspace",
+      logo: (
+        <svg className="h-6 w-6 shrink-0" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+        </svg>
+      ),
+      desc: "Đồng bộ hóa email Gmail, tệp tin Drive và lịch biểu sự kiện."
+    },
+    microsoft: {
+      name: "Microsoft 365",
+      logo: (
+        <svg className="h-6 w-6 shrink-0" viewBox="0 0 23 23">
+          <rect x="0" y="0" width="11" height="11" fill="#F25022" />
+          <rect x="12" y="0" width="11" height="11" fill="#7FBA00" />
+          <rect x="0" y="12" width="11" height="11" fill="#00A1F1" />
+          <rect x="12" y="12" width="11" height="11" fill="#FFB900" />
+        </svg>
+      ),
+      desc: "Kết nối kho SharePoint, dữ liệu đám mây OneDrive và Outlook Mail."
+    },
+    odoo: {
+      name: "ERP Odoo VinaCorp",
+      logo: (
+        <div className="h-6 w-6 rounded-md bg-[#714B67] flex items-center justify-center text-white font-extrabold text-[10px] select-none shrink-0">
+          odoo
+        </div>
+      ),
+      desc: "Truy xuất danh mục bán hàng, kho vận, hóa đơn tài chính và nhân sự."
+    },
+    salesforce: {
+      name: "Salesforce CRM",
+      logo: (
+        <svg className="h-6 w-6 shrink-0" viewBox="0 0 24 24" fill="#00A1E0">
+          <path d="M18.1 9c.1-.3.1-.6.1-.9 0-2.4-2-4.4-4.4-4.4-1.7 0-3.2 1-3.9 2.4-.6-.5-1.4-.9-2.2-.9-1.9 0-3.5 1.5-3.5 3.5 0 .2 0 .5.1.7C1.8 10.3 0 12.4 0 14.8c0 3 2.5 5.5 5.5 5.5h12.7c3.2 0 5.8-2.6 5.8-5.8 0-2.7-1.8-5-4.4-5.5z" />
+        </svg>
+      ),
+      desc: "So khớp cơ hội bán hàng, thông tin khách hàng tiềm năng B2B."
+    },
+    hubspot: {
+      name: "HubSpot CRM",
+      logo: (
+        <svg className="h-6 w-6 shrink-0" viewBox="0 0 24 24" fill="#FF7A59">
+          <path d="M21.9 10c.1-.4.1-.8.1-1.2 0-3.3-2.7-6-6-6-2.5 0-4.6 1.5-5.5 3.7C9.7 6.1 8.9 5.8 8 5.8c-2.8 0-5 2.2-5 5 0 .3 0 .6.1.9C1.3 12.6 0 14.5 0 16.7c0 2.8 2.2 5 5 5h13.7c3.1 0 5.6-2.5 5.6-5.6 0-2.6-1.8-4.8-4.4-5.4l2-1.7zM8 19c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z" />
+        </svg>
+      ),
+      desc: "Đồng bộ hóa dữ liệu khách hàng liên hệ và chiến dịch marketing."
+    }
+  };
+
+  const allProviders = ["google", "microsoft", "odoo", "salesforce", "hubspot"];
+
   const tabs = [
     { id: "profile", name: "Hồ sơ cá nhân", icon: User },
     { id: "theme", name: "Giao diện & Ngôn ngữ", icon: Paintbrush },
     { id: "notification", name: "Thông báo", icon: Bell },
     { id: "ai", name: "Cấu hình AI", icon: Cpu },
-    { id: "demo", name: "Xác thực vai trò (Demo)", icon: Shield },
+    { id: "accounts", name: "Dịch vụ liên kết", icon: Key },
   ];
 
   return (
@@ -234,66 +352,248 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Tab 5: Switch Role Demo */}
-          {activeTab === "demo" && (
-            <div className="space-y-4 select-none">
-              <div className="flex items-center gap-2 border-b border-border/60 pb-3">
-                <Shield className="h-5 w-5 text-primary" />
-                <h3 className="text-xs font-bold text-foreground">Thay đổi vai trò trải nghiệm</h3>
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                Để phục vụ việc kiểm thử, bạn có thể tự do chuyển đổi giữa tài khoản User thường và Admin. Khi đổi thành Admin, Menu Quản trị (Admin) sẽ lập tức xuất hiện ở Sidebar và Header.
-              </p>
 
-              <div className="p-3.5 bg-secondary/35 border border-border/80 rounded-xl flex items-start gap-2.5">
-                <Info className="h-4.5 w-4.5 text-primary shrink-0 mt-0.5" />
-                <div className="text-[11px] leading-relaxed text-muted-foreground">
-                  <p className="font-bold text-foreground">Trạng thái vai trò hiện tại: {user.role}</p>
-                  <p className="mt-1">
-                    Vai trò hiện tại là <span className="font-bold text-foreground">{user.role}</span>.
-                    {user.role === "Admin"
-                      ? " Bạn đang có toàn quyền truy cập bảng Cost, danh sách Users và Audit Log của tập đoàn."
-                      : " Menu quản trị bị ẩn đi để bảo vệ dữ liệu."}
-                  </p>
+
+          {/* Tab 5: Connected Accounts */}
+          {activeTab === "accounts" && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-xs font-bold text-foreground font-display">Kết nối Dịch vụ Doanh nghiệp</h3>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
+                  Liên kết các tài khoản đám mây và công cụ doanh nghiệp để các Agent chuyên biệt có thể hoạt động và tra cứu dữ liệu.
+                </p>
+              </div>
+
+              {accountsLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="bg-card border border-border/80 rounded-xl p-4 space-y-3.5 animate-pulse">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 bg-muted rounded-lg" />
+                        <div className="space-y-1.5 flex-1">
+                          <div className="h-3.5 w-24 bg-muted rounded" />
+                          <div className="h-2.5 w-16 bg-muted rounded" />
+                        </div>
+                      </div>
+                      <div className="h-3 w-full bg-muted rounded pt-1" />
+                    </div>
+                  ))}
                 </div>
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 select-none">
+                  {allProviders.map((provKey) => {
+                    const detail = providerDetails[provKey as keyof typeof providerDetails];
+                    const providerConns = accounts.filter((a) => a.provider === provKey);
 
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => {
-                    setRole("User");
-                    addNotification("Đổi vai trò", "Đã chuyển đổi quyền hạn sang nhân viên thường (User).");
-                  }}
-                  className={cn(
-                    "flex-1 px-4 py-2.5 rounded-lg border text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all",
-                    user.role === "User"
-                      ? "bg-primary text-primary-foreground border-primary shadow-premium-sm"
-                      : "bg-card border-border hover:bg-secondary"
-                  )}
-                >
-                  <span>Chuyển thành USER</span>
-                  {user.role === "User" && <Check className="h-4 w-4" />}
-                </button>
-                <button
-                  onClick={() => {
-                    setRole("Admin");
-                    addNotification("Đổi vai trò", "Đã chuyển đổi quyền hạn sang Quản trị viên (Admin).");
-                  }}
-                  className={cn(
-                    "flex-1 px-4 py-2.5 rounded-lg border text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all",
-                    user.role === "Admin"
-                      ? "bg-primary text-primary-foreground border-primary shadow-premium-sm"
-                      : "bg-card border-border hover:bg-secondary"
-                  )}
-                >
-                  <span>Chuyển thành ADMIN</span>
-                  {user.role === "Admin" && <Check className="h-4 w-4" />}
-                </button>
-              </div>
+                    return (
+                      <div
+                        key={provKey}
+                        className={cn(
+                          "bg-card border rounded-xl p-4 shadow-premium-sm flex flex-col justify-between transition-all relative overflow-hidden group",
+                          providerConns.length > 0
+                            ? providerConns.some(c => c.status === "error")
+                              ? "border-rose-500/30 hover:border-rose-500/50"
+                              : "border-border/80 hover:border-primary/30"
+                            : "border-border/60 border-dashed hover:border-border hover:bg-secondary/15"
+                        )}
+                      >
+                        <div>
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="h-9 w-9 rounded-xl bg-secondary/80 flex items-center justify-center shrink-0 border border-border/40">
+                              {detail.logo}
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="text-xs font-bold text-foreground truncate">{detail.name}</h4>
+                              <p className="text-[10px] text-muted-foreground truncate leading-none mt-1">
+                                {providerConns.length > 0
+                                  ? `Đã kết nối ${providerConns.length} tài khoản`
+                                  : "Chưa liên kết"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
+                            {detail.desc}
+                          </p>
+
+                          {/* Accounts List for this provider */}
+                          {providerConns.length > 0 && (
+                            <div className="mt-4 pt-3 border-t border-border/60 space-y-2">
+                              {providerConns.map((acc) => (
+                                <div key={acc.id} className="flex items-center justify-between gap-3 p-2 bg-secondary/25 border border-border/40 rounded-lg text-xs">
+                                  <div className="min-w-0 flex-1">
+                                    <p className="font-bold text-foreground truncate">{acc.name}</p>
+                                    <p className="text-[10px] text-muted-foreground truncate font-mono mt-0.5">{acc.email}</p>
+                                    
+                                    <div className="flex items-center gap-1.5 mt-1.5 select-none">
+                                      {acc.status === "connected" ? (
+                                        <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1 py-0.5 rounded leading-none">
+                                          Đã đồng bộ
+                                        </span>
+                                      ) : acc.status === "syncing" ? (
+                                        <span className="text-[8px] font-bold text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded leading-none animate-pulse">
+                                          Đồng bộ...
+                                        </span>
+                                      ) : (
+                                        <span className="text-[8px] font-bold text-rose-500 bg-rose-500/10 px-1 py-0.5 rounded leading-none flex items-center gap-0.5">
+                                          <AlertCircle className="h-2 w-2" />
+                                          Lỗi
+                                        </span>
+                                      )}
+                                      <span className="text-[8px] text-muted-foreground font-mono leading-none">
+                                        {formatRelativeTime(acc.lastSync)}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center shrink-0">
+                                    {/* Delete Button */}
+                                    <button
+                                      onClick={() => setConfirmDeleteId(acc.id)}
+                                      className="p-1.5 rounded-lg hover:bg-rose-50/15 border border-transparent hover:border-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                                      title="Ngắt kết nối tài khoản"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Card bottom actions */}
+                        <div className="mt-4 pt-3 border-t border-border/60 flex justify-end">
+                          {providerConns.length > 0 ? (
+                            <button
+                              onClick={() => handleStartConnect(provKey)}
+                              className="px-2.5 py-1 text-[10px] font-bold text-primary hover:bg-primary/5 rounded border border-primary/20 cursor-pointer transition-colors"
+                            >
+                              + Liên kết tài khoản khác
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleStartConnect(provKey)}
+                              className="px-2.5 py-1 bg-secondary hover:bg-secondary/80 text-[10px] font-bold text-foreground rounded border border-border/80 cursor-pointer transition-colors"
+                            >
+                              Liên kết
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
+
+      {/* OAuth Integration Dialog Modal */}
+      <Dialog.Root open={oauthModalOpen} onOpenChange={setOauthModalOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 animate-fade-in" />
+          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-card border border-border shadow-premium-lg rounded-xl p-5 outline-none z-50">
+            {selectedProvider && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-xl bg-secondary/80 flex items-center justify-center shrink-0 border border-border/40">
+                    {providerDetails[selectedProvider as keyof typeof providerDetails].logo}
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-foreground">
+                      {oauthStep === 1
+                        ? `Liên kết ${providerDetails[selectedProvider as keyof typeof providerDetails].name}`
+                        : oauthStep === 2
+                        ? `Đang ủy quyền...`
+                        : `Liên kết thành công!`}
+                    </h3>
+                  </div>
+                </div>
+
+                {oauthStep === 1 && (
+                  <>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Cổng thông tin AI Portal cần cấp quyền đọc để thực hiện trích xuất dữ liệu. Vui lòng điền email tài khoản doanh nghiệp của bạn:
+                    </p>
+                    <div className="space-y-1.5 mt-2">
+                      <label className="text-[10px] font-bold text-muted-foreground">Email tài khoản</label>
+                      <input
+                        type="email"
+                        value={emailInput}
+                        onChange={(e) => setEmailInput(e.target.value)}
+                        className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2 mt-4 pt-2">
+                      <button
+                        onClick={() => setOauthModalOpen(false)}
+                        className="px-3 py-1.5 rounded-lg border border-border hover:bg-secondary text-xs font-semibold cursor-pointer"
+                      >
+                        Hủy bỏ
+                      </button>
+                      <button
+                        onClick={handleRunOauthFlow}
+                        className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer"
+                      >
+                        Đồng ý kết nối
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {oauthStep === 2 && (
+                  <div className="py-6 flex flex-col items-center justify-center gap-3">
+                    <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                    <p className="text-xs text-muted-foreground text-center animate-pulse">
+                      Đang đồng bộ phân quyền & dữ liệu tài liệu...
+                    </p>
+                  </div>
+                )}
+
+                {oauthStep === 3 && (
+                  <div className="py-6 flex flex-col items-center justify-center gap-3 animate-scale-in">
+                    <div className="h-10 w-10 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center">
+                      <CheckCircle2 className="h-6 w-6" />
+                    </div>
+                    <p className="text-xs text-emerald-500 font-bold text-center">
+                      Kết nối dịch vụ hoàn tất!
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      {/* Delete confirmation dialog */}
+      <Dialog.Root open={confirmDeleteId !== null} onOpenChange={(open) => !open && setConfirmDeleteId(null)}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50" />
+          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xs bg-card border border-border shadow-premium-lg rounded-xl p-5 outline-none z-50">
+            <Dialog.Title className="text-xs font-bold text-foreground">Ngắt kết nối tài khoản?</Dialog.Title>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Bạn có chắc muốn gỡ bỏ liên kết dịch vụ này? AI sẽ không thể truy xuất và chỉ mục dữ liệu mới từ nguồn này nữa.
+            </p>
+            <div className="flex justify-end gap-2 mt-4 pt-2">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-secondary text-[10px] font-bold cursor-pointer"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={() => handleDeleteConfirm(confirmDeleteId!)}
+                className="px-2.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-bold shadow-premium-sm cursor-pointer"
+              >
+                Xác nhận gỡ
+              </button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }

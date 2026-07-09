@@ -33,6 +33,7 @@ function AgentCardSkeleton() {
 export default function AgentCenterPage() {
   const router = useRouter();
   const { addConversation } = useChatStore();
+  const { user } = useAppStore();
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
@@ -56,7 +57,16 @@ export default function AgentCenterPage() {
     { id: "salesforce", name: "Salesforce" }
   ];
 
+  // Mapped agents allowed for each role
+  const roleAllowedAgents: Record<string, string[]> = {
+    Admin: ["agent-calendar", "agent-email", "agent-erp", "agent-crm", "agent-docs"],
+    User: ["agent-calendar", "agent-email", "agent-erp", "agent-crm"]
+  };
+
   const filteredAgents = agents.filter((agent) => {
+    const allowedAgentIds = roleAllowedAgents[user.role] || ["agent-calendar", "agent-email", "agent-erp", "agent-crm"];
+    if (!allowedAgentIds.includes(agent.id)) return false;
+
     const matchSearch = agent.name.toLowerCase().includes(search.toLowerCase()) ||
                         agent.tool.toLowerCase().includes(search.toLowerCase()) ||
                         agent.description.toLowerCase().includes(search.toLowerCase());
@@ -107,7 +117,7 @@ export default function AgentCenterPage() {
       const convId = addConversation(`Agent ${agent.name.split(" ")[1]} Workspace`, agent.id);
       router.push(`/chat/${convId}?agent=${agent.id}`);
     } else {
-      router.push("/connected-accounts");
+      router.push("/settings#accounts");
     }
   };
 

@@ -68,6 +68,8 @@ export const mockKnowledgeDocs: KnowledgeDoc[] = [
     category: "Pháp lý & Tổ chức",
     tags: ["Sơ đồ tổ chức", "Quy chế", "Quyết định"],
     folderPath: "Quy định & Chính sách",
+    appSource: "Google Drive",
+    accountId: "a1",
     content: "TẬP ĐOÀN VINACORP\nCỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n\nSố: 15/2026/QĐ-HDQT\n\nQUYẾT ĐỊNH\nVề việc Phê duyệt Sơ đồ Tổ chức và Định biên Nhân sự năm 2026...\nBan hành cơ cấu tổ chức gồm: Hội đồng Quản trị, Tổng Giám đốc, Ban Kiểm soát, Ban Công nghệ Thông tin, Ban Tài chính, Ban Nhân sự và 4 Khối kinh doanh..."
   },
   {
@@ -80,6 +82,8 @@ export const mockKnowledgeDocs: KnowledgeDoc[] = [
     category: "Nhân sự (HR)",
     tags: ["Sổ tay nhân viên", "Nội quy", "Lương thưởng"],
     folderPath: "Quy định & Chính sách",
+    appSource: "Google Drive",
+    accountId: "a1",
     content: "SỔ TAY NHÂN VIÊN VINACORP\n\nChào mừng bạn gia nhập VinaCorp! Sổ tay này nhằm cung cấp thông tin về quy trình làm việc, giờ giấc, chính sách phúc lợi và các quy tắc ứng xử chuẩn mực...\n- Giờ làm việc: 8:00 - 17:30 (nghỉ trưa từ 12:00 - 13:30), thứ Hai đến thứ Sáu.\n- Trang phục: Lịch sự, công sở chuyên nghiệp..."
   },
   {
@@ -91,7 +95,9 @@ export const mockKnowledgeDocs: KnowledgeDoc[] = [
     updatedBy: "Nguyễn Lê Hoàng",
     category: "Tài chính",
     tags: ["Báo cáo tài chính", "Quý 1", "Kiểm toán"],
-    folderPath: "Báo cáo Tài chính",
+    folderPath: "Báo cáo",
+    appSource: "Google Drive",
+    accountId: "a1",
     content: "BÁO CÁO KẾT QUẢ HOẠT ĐỘNG KINH DOANH QUÝ 1 - 2026\n(Đơn vị tính: VNĐ)\n\n1. Doanh thu thuần: 120.450.000.000 VNĐ\n2. Giá vốn hàng bán: 75.320.000.000 VNĐ\n3. Lợi nhuận gộp: 45.130.000.000 VNĐ\n4. Chi phí bán hàng: 12.400.000.000 VNĐ\n5. Chi phí quản lý doanh nghiệp: 8.900.000.000 VNĐ\n6. Lợi nhuận thuần từ HĐKD: 23.830.000.000 VNĐ\nTăng trưởng 15.4% so với cùng kỳ năm 2025."
   },
   {
@@ -104,6 +110,8 @@ export const mockKnowledgeDocs: KnowledgeDoc[] = [
     category: "Marketing",
     tags: ["Sản phẩm mới", "Slide", "Marketing Plan"],
     folderPath: "Tài liệu Dự án",
+    appSource: "OneDrive",
+    accountId: "a2",
     content: "KẾ HOẠCH TÙNG RA SẢN PHẨM SMARTAI HUB - Q3/2026\n\nSlide 1: Giới thiệu sản phẩm SmartAI Hub - Giải pháp quản trị tri thức doanh nghiệp bằng AI.\nSlide 2: Khách hàng mục tiêu: Các tập đoàn vừa và lớn tại Việt Nam có nhu cầu tự động hóa.\nSlide 3: Kênh truyền thông chủ lực: Tech Events, PR Báo chí lớn (VnExpress, Cafef), LinkedIn Ads..."
   },
   {
@@ -115,7 +123,9 @@ export const mockKnowledgeDocs: KnowledgeDoc[] = [
     updatedBy: "Trần Thị Lan",
     category: "Pháp lý & Tổ chức",
     tags: ["Hợp đồng", "Đại lý", "Mẫu chuẩn"],
-    folderPath: "Mẫu Hợp đồng",
+    folderPath: "Hóa đơn & Hợp đồng",
+    appSource: "Google Drive",
+    accountId: "a1",
     content: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n\nHỢP ĐỒNG NGUYÊN TẮC PHÂN PHỐI SẢN PHẨM\n(Số: 88/2026/HĐNT-VNC)\n\nBÊN A: CÔNG TY CỔ PHẦN TẬP ĐOÀN VINACORP\nBÊN B: CÔNG TY TNHH PHÁT TRIỂN CÔNG NGHỆ THÀNH PHÁT\nĐiều 1: Phạm vi phân phối sản phẩm phần mềm SmartAI...\nĐiều 2: Chiết khấu đại lý dao động từ 25% đến 35% tùy thuộc vào doanh số quý..."
   },
   {
@@ -128,6 +138,8 @@ export const mockKnowledgeDocs: KnowledgeDoc[] = [
     category: "Marketing",
     tags: ["Nghiên cứu thị trường", "Đối thủ", "AI Portal"],
     folderPath: "Tài liệu Dự án",
+    appSource: "OneDrive",
+    accountId: "a2",
     content: "BÁO CÁO PHÂN TÍCH THỊ TRƯỜNG ENTERPRISE AI PORTAL 2026\n\nTại Việt Nam, xu hướng ứng dụng AI tạo sinh (GenAI) trong doanh nghiệp đang tăng mạnh. Các đối thủ chính bao gồm:\n- Co-pilot của Microsoft (Ưu điểm: Tích hợp tốt Office, Nhược điểm: Giá cao, khó tùy biến sâu theo ERP Việt Nam).\n- OpenAI Enterprise (Ưu điểm: Mô hình mạnh nhất, Nhược điểm: Chưa tích hợp sẵn các hệ thống ERP nội địa like Odoo, MISA)...\nGiải pháp định vị của VinaCorp: Chuyên biệt hóa tích hợp dữ liệu nội địa Việt Nam."
   },
   {
@@ -139,7 +151,9 @@ export const mockKnowledgeDocs: KnowledgeDoc[] = [
     updatedBy: "Nguyễn Minh Khang",
     category: "IT Security",
     tags: ["Bảo mật", "Chính sách", "ISO 27001"],
-    folderPath: "Quy định & Chính sách",
+    folderPath: "Chính sách Bảo mật",
+    appSource: "OneDrive",
+    accountId: "a2",
     content: "CHÍNH SÁCH AN TOÀN THÔNG TIN VINACORP (ISO 27001)\n\n1. Quy định mật khẩu: Tối thiểu 12 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt. Đổi định kỳ 90 ngày.\n2. Phân quyền dữ liệu (Role-Based Access Control): Nhân viên chỉ có quyền truy cập dữ liệu thuộc bộ phận hoặc dự án được chỉ định.\n3. Cấm sao chép mã nguồn và dữ liệu khách hàng ra các thiết bị ngoại vi cá nhân."
   },
   {
@@ -151,8 +165,38 @@ export const mockKnowledgeDocs: KnowledgeDoc[] = [
     updatedBy: "Phạm Văn Minh",
     category: "Kinh doanh (Sales)",
     tags: ["Khách hàng", "Key Accounts", "Doanh số"],
-    folderPath: "Kế hoạch",
+    folderPath: "Khách hàng Doanh nghiệp",
+    appSource: "Salesforce",
+    accountId: "a4",
     content: "DANH SÁCH KHÁCH HÀNG TRỌNG ĐIỂM VINACORP - NĂM 2026\n\n1. Tập đoàn Xây dựng Hòa Bình - Doanh thu kỳ vọng: 15 tỷ VNĐ - Người phụ trách: Lê Văn Hải.\n2. Ngân hàng Vietcombank (Khối Bán lẻ) - Doanh thu kỳ vọng: 45 tỷ VNĐ - Người phụ trách: Nguyễn Minh Khang.\n3. Tổng công ty Hàng không Việt Nam (Vietnam Airlines) - Doanh thu kỳ vọng: 30 tỷ VNĐ - Người phụ trách: Phạm Văn Minh..."
+  },
+  {
+    id: "kd9",
+    title: "Danh sách bảng lương nhân viên tháng 06-2026.xlsx",
+    type: "xlsx",
+    size: "1.2 MB",
+    updatedAt: new Date("2026-07-01T08:00:00Z"),
+    updatedBy: "Lê Thị Thảo (HR)",
+    category: "Nhân sự (HR)",
+    tags: ["Bảng lương", "Tháng 6", "ERP Odoo"],
+    folderPath: "Hồ sơ Nhân sự",
+    appSource: "ERP Odoo",
+    accountId: "a3",
+    content: "BẢNG PHÂN BỔ LƯƠNG NHÂN VIÊN THÁNG 6/2026 - ODOO ERP\n\nTổng quỹ lương: 1.250.000.000 VNĐ.\n1. Khối Công nghệ: 450.000.000 VNĐ.\n2. Khối Kinh doanh: 500.000.000 VNĐ.\n3. Khối Vận hành: 300.000.000 VNĐ..."
+  },
+  {
+    id: "kd10",
+    title: "Hóa đơn bán hàng xuất khẩu ABC Corp.pdf",
+    type: "pdf",
+    size: "820 KB",
+    updatedAt: new Date("2026-07-05T14:00:00Z"),
+    updatedBy: "Nguyễn Lê Hoàng",
+    category: "Tài chính",
+    tags: ["Hóa đơn", "ERP Odoo", "ABC Corp"],
+    folderPath: "Hóa đơn & Doanh thu",
+    appSource: "ERP Odoo",
+    accountId: "a3",
+    content: "HÓA ĐƠN GIÁ TRỊ GIA TĂNG (VAT INVOICE)\nSố hóa đơn: INV-2026-9923\nKhách hàng: ABC Corp - Singapore\nTên sản phẩm: Phần mềm SmartAI Hub Enterprise License - Số lượng: 1 - Thành tiền: 150.000.000 VNĐ."
   }
 ];
 
@@ -549,4 +593,87 @@ export const agentThinkingSteps: Record<string, ThinkingStep[]> = {
     { label: "Tổng hợp điều khoản phạt đền...", icon: "sparkles" }
   ]
 };
+
+export interface SystemAlert {
+  id: string;
+  title: string;
+  desc: string;
+  severity: "warning" | "error";
+  provider: string;
+  actionLabel: string;
+  actionHash: string;
+}
+
+export interface PersonalTask {
+  id: string;
+  type: "calendar" | "document" | "crm" | "hr";
+  title: string;
+  dueTime: string;
+  linkTo: string;
+}
+
+export const mockUserDashboardStats = {
+  aiHelpedCount: 38,
+  aiHelpedByDay: [
+    { day: "T2", count: 4 },
+    { day: "T3", count: 6 },
+    { day: "T4", count: 8 },
+    { day: "T5", count: 12 },
+    { day: "T6", count: 8 }
+  ],
+  recentDocsCount: 14,
+  runningWorkflowsCount: 3
+};
+
+export const mockDepartmentUsage = [
+  { name: "Sales", cost: 3800000, requests: 350 },
+  { name: "CNTT (IT)", cost: 5400000, requests: 540 },
+  { name: "Marketing", cost: 1500000, requests: 150 },
+  { name: "Nhân sự (HR)", cost: 900000, requests: 90 }
+];
+
+export const mockSystemAlerts: SystemAlert[] = [
+  {
+    id: "al1",
+    title: "Mất kết nối tài khoản Salesforce CRM",
+    desc: "Mã token OAuth của salesforce.vinacorp.vn đã hết hạn, gây gián đoạn quy trình đối chiếu dữ liệu doanh số.",
+    severity: "error",
+    provider: "salesforce",
+    actionLabel: "Kết nối lại",
+    actionHash: "/settings#accounts"
+  },
+  {
+    id: "al2",
+    title: "Lỗi đồng bộ Microsoft OneDrive",
+    desc: "Không thể truy xuất tệp '/Tài liệu Dự án/SmartAI.pptx' do quyền đọc bị hạn chế từ phía quản trị viên Microsoft.",
+    severity: "warning",
+    provider: "microsoft",
+    actionLabel: "Kiểm tra",
+    actionHash: "/settings#accounts"
+  }
+];
+
+export const mockPersonalTasks: PersonalTask[] = [
+  {
+    id: "pt1",
+    type: "calendar",
+    title: "🗓️ Bạn có 2 cuộc họp chiều nay lúc 14:00 và 16:00 (Xem lịch trình)",
+    dueTime: "Hôm nay",
+    linkTo: "/agents?agent=agent-calendar"
+  },
+  {
+    id: "pt2",
+    type: "document",
+    title: "📄 Hợp đồng đại lý Thành Phát cần bạn duyệt trước 17:00 chiều nay",
+    dueTime: "Trước 17h",
+    linkTo: "/knowledge"
+  },
+  {
+    id: "pt3",
+    type: "crm",
+    title: "✅ Báo giá gửi khách hàng ABC Corp đã được Agent soạn xong, đang chờ bạn duyệt",
+    dueTime: "Hôm nay",
+    linkTo: "/agents?agent=agent-crm"
+  }
+];
 

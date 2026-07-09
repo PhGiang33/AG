@@ -5,20 +5,83 @@ import { mockKnowledgeDocs, mockFetch } from "@/lib/mock-data";
 import { KnowledgeDoc } from "@/lib/types";
 import { KnowledgeSkeleton } from "@/components/skeletons";
 import { EmptyKnowledgeState } from "@/components/empty-states";
-import { Search, Folder, FileText, Filter, Calendar, User, Tag, ArrowRight, Eye, Download, X } from "lucide-react";
+import { Search, Folder, FileText, Filter, Calendar, User, Tag, ArrowRight, Eye, Download, X, ChevronDown } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
+import { useAccountStore } from "@/lib/store";
 import { useSearchParams, useRouter } from "next/navigation";
 
 export default function KnowledgePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { accounts } = useAccountStore();
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [activeApp, setActiveApp] = useState<string | null>(null);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
   
+  // Selected account IDs filter
+  const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
+  // Toggled/expanded providers list inside knowledge search filters
+  const [expandedProviders, setExpandedProviders] = useState<string[]>([]);
   const [previewDoc, setPreviewDoc] = useState<KnowledgeDoc | null>(null);
+
+  const allProviders = ["google", "microsoft", "odoo", "salesforce", "hubspot"];
+  const providerDetails = {
+    google: {
+      name: "Google Drive",
+      logo: (
+        <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+        </svg>
+      )
+    },
+    microsoft: {
+      name: "OneDrive",
+      logo: (
+        <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 23 23">
+          <rect x="0" y="0" width="11" height="11" fill="#F25022" />
+          <rect x="12" y="0" width="11" height="11" fill="#7FBA00" />
+          <rect x="0" y="12" width="11" height="11" fill="#00A1F1" />
+          <rect x="12" y="12" width="11" height="11" fill="#FFB900" />
+        </svg>
+      )
+    },
+    odoo: {
+      name: "ERP Odoo",
+      logo: (
+        <div className="h-3.5 w-3.5 rounded bg-[#714B67] flex items-center justify-center text-white font-extrabold text-[5px] select-none shrink-0">
+          odoo
+        </div>
+      )
+    },
+    salesforce: {
+      name: "Salesforce",
+      logo: (
+        <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#00A1E0">
+          <path d="M18.1 9c.1-.3.1-.6.1-.9 0-2.4-2-4.4-4.4-4.4-1.7 0-3.2 1-3.9 2.4-.6-.5-1.4-.9-2.2-.9-1.9 0-3.5 1.5-3.5 3.5 0 .2 0 .5.1.7C1.8 10.3 0 12.4 0 14.8c0 3 2.5 5.5 5.5 5.5h12.7c3.2 0 5.8-2.6 5.8-5.8 0-2.7-1.8-5-4.4-5.5z" />
+        </svg>
+      )
+    },
+    hubspot: {
+      name: "HubSpot",
+      logo: (
+        <svg className="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="#FF7A59">
+          <path d="M21.9 10c.1-.4.1-.8.1-1.2 0-3.3-2.7-6-6-6-2.5 0-4.6 1.5-5.5 3.7C9.7 6.1 8.9 5.8 8 5.8c-2.8 0-5 2.2-5 5 0 .3 0 .6.1.9C1.3 12.6 0 14.5 0 16.7c0 2.8 2.2 5 5 5h13.7c3.1 0 5.6-2.5 5.6-5.6 0-2.6-1.8-4.8-4.4-5.4l2-1.7zM8 19c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z" />
+        </svg>
+      )
+    }
+  };
+
+  // Initialize selectedAccountIds with all connected account IDs when accounts are loaded
+  useEffect(() => {
+    if (accounts.length > 0 && selectedAccountIds.length === 0) {
+      setSelectedAccountIds(accounts.map(a => a.id));
+    }
+  }, [accounts, selectedAccountIds.length]);
 
   // Read URL query parameter for command palette preview redirection
   useEffect(() => {
@@ -34,16 +97,47 @@ export default function KnowledgePage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const folders = Array.from(new Set(mockKnowledgeDocs.map(d => d.folderPath).filter(Boolean))) as string[];
-  const categories = ["All", ...Array.from(new Set(mockKnowledgeDocs.map(d => d.category)))];
+  // Filter docs whose source accounts are connected and active in settings AND selected in filters
+  const getActiveDocsList = () => {
+    return mockKnowledgeDocs.filter((doc) => {
+      const prov = doc.appSource ? doc.appSource.toLowerCase() : "";
+      let providerKey = "";
+      if (prov.includes("google") || prov.includes("drive")) providerKey = "google";
+      else if (prov.includes("onedrive") || prov.includes("microsoft")) providerKey = "microsoft";
+      else if (prov.includes("odoo") || prov.includes("erp")) providerKey = "odoo";
+      else if (prov.includes("salesforce") || prov.includes("crm")) providerKey = "salesforce";
+
+      if (providerKey) {
+        const providerAccounts = accounts.filter(a => a.provider === providerKey);
+        if (providerAccounts.length === 0) return false;
+      }
+      
+      // Filter by selected accounts scope
+      if (doc.accountId && !selectedAccountIds.includes(doc.accountId)) {
+        return false;
+      }
+      
+      return true;
+    });
+  };
+
+  const activeDocs = getActiveDocsList();
+
+  const apps = Array.from(new Set(activeDocs.map(d => d.appSource).filter(Boolean))) as string[];
+  const folders = Array.from(new Set(
+    activeDocs
+      .filter(d => !activeApp || d.appSource === activeApp)
+      .map(d => d.folderPath)
+      .filter(Boolean)
+  )) as string[];
 
   const getFilteredDocs = () => {
-    return mockKnowledgeDocs.filter((doc) => {
+    return activeDocs.filter((doc) => {
       const matchSearch = doc.title.toLowerCase().includes(search.toLowerCase()) ||
                           doc.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
-      const matchCategory = selectedCategory === "All" || doc.category === selectedCategory;
+      const matchApp = !activeApp || doc.appSource === activeApp;
       const matchFolder = !activeFolder || doc.folderPath === activeFolder;
-      return matchSearch && matchCategory && matchFolder;
+      return matchSearch && matchApp && matchFolder;
     });
   };
 
@@ -77,68 +171,86 @@ export default function KnowledgePage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left column: Folders tree and Categories (1 col) */}
         <div className="space-y-5 select-none">
-          {/* Folders Tree card */}
-          <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm space-y-3">
-            <h3 className="text-xs font-bold text-foreground">Thư mục Tài liệu</h3>
-            <div className="space-y-1 mt-2">
+          {/* Folders Tree card categorized by app */}
+          <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm space-y-3.5">
+            <h3 className="text-sm font-bold text-foreground font-display">Nguồn dữ liệu & Thư mục</h3>
+            <div className="space-y-1.5 mt-2">
               <button
-                onClick={() => setActiveFolder(null)}
+                onClick={() => { setActiveApp(null); setActiveFolder(null); }}
                 className={cn(
-                  "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left text-xs font-medium cursor-pointer transition-colors",
-                  !activeFolder
+                  "w-full flex items-center justify-between px-2.5 py-2.5 rounded-lg text-left text-xs font-semibold cursor-pointer transition-colors",
+                  !activeApp
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
                 )}
               >
-                <Folder className="h-4 w-4 shrink-0" />
-                <span>Tất cả thư mục</span>
+                <span>Tất cả nguồn</span>
+                <span className="text-[10px] font-mono bg-secondary px-1.5 py-0.5 rounded border">
+                  {activeDocs.length}
+                </span>
               </button>
-              
-              <div className="pl-2 border-l border-border/60 ml-4 space-y-1 mt-1">
-                {folders.map((folder) => (
-                  <button
-                    key={folder}
-                    onClick={() => setActiveFolder(folder)}
-                    className={cn(
-                      "w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left text-[11px] font-medium cursor-pointer transition-colors",
-                      activeFolder === folder
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
-                    )}
-                  >
-                    <Folder className="h-3.5 w-3.5 shrink-0 text-amber-500" />
-                    <span className="truncate">{folder}</span>
-                  </button>
-                ))}
+
+              <div className="space-y-2 pt-1.5">
+                {apps.map((app) => {
+                  const appDocsCount = activeDocs.filter(d => d.appSource === app).length;
+                  const isSelected = activeApp === app;
+                  
+                  return (
+                    <div key={app} className="space-y-1.5">
+                      <button
+                        onClick={() => { setActiveApp(app); setActiveFolder(null); }}
+                        className={cn(
+                          "w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-left text-xs font-semibold cursor-pointer transition-all",
+                          isSelected
+                            ? "bg-secondary text-primary border-l-2 border-primary pl-2"
+                            : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                        )}
+                      >
+                        <span className="flex items-center gap-2 truncate">
+                          <Folder className={cn("h-4 w-4 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
+                          <span className="truncate">{app}</span>
+                        </span>
+                        <span className="text-[10px] font-mono bg-secondary px-1.5 py-0.5 rounded border leading-none shrink-0 text-muted-foreground">
+                          {appDocsCount}
+                        </span>
+                      </button>
+
+                      {/* Folder list under selected app */}
+                      {isSelected && (
+                        <div className="pl-3.5 border-l border-border/60 ml-4.5 space-y-2 py-1 animate-fade-in">
+                          {folders.map((folder) => {
+                            const folderDocsCount = activeDocs.filter(d => d.appSource === app && d.folderPath === folder).length;
+                            const isFolderSelected = activeFolder === folder;
+                            return (
+                              <button
+                                key={folder}
+                                onClick={() => setActiveFolder(folder)}
+                                className={cn(
+                                  "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-left text-xs font-medium cursor-pointer transition-colors",
+                                  isFolderSelected
+                                    ? "text-primary font-bold bg-primary/5"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+                                )}
+                              >
+                                <span className="truncate">{folder}</span>
+                                <span className="text-[10px] font-mono text-muted-foreground/80 leading-none shrink-0 pl-1">{folderDocsCount}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          {/* Categories card */}
-          <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm space-y-3">
-            <h3 className="text-xs font-bold text-foreground">Chủ đề phân loại</h3>
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={cn(
-                    "px-2.5 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer border",
-                    selectedCategory === cat
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-secondary/50 text-muted-foreground border-border hover:bg-secondary"
-                  )}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Right column: Search & Documents Grid (3 cols) */}
         <div className="lg:col-span-3 space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col gap-3">
             {/* Search */}
             <div className="relative flex-1 select-none">
               <Search className="absolute left-3 top-2.5 h-4.5 w-4.5 text-muted-foreground/80" />
@@ -150,6 +262,113 @@ export default function KnowledgePage() {
                 className="w-full pl-10 pr-4 py-2 text-xs bg-card border border-border/80 rounded-lg outline-none focus:border-primary text-foreground placeholder-muted-foreground"
               />
             </div>
+
+            {/* Account scope filters */}
+            {accounts.length > 0 && (
+              <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm space-y-3.5 select-none">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-foreground font-display flex items-center gap-1.5 uppercase">
+                    <Filter className="h-3.5 w-3.5 text-primary" />
+                    Phạm vi tri thức kết nối
+                  </span>
+                  
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setSelectedAccountIds(accounts.map(a => a.id))}
+                      className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
+                    >
+                      Chọn tất cả
+                    </button>
+                    <span className="text-[11px] text-muted-foreground/50">|</span>
+                    <button
+                      onClick={() => setSelectedAccountIds([])}
+                      className="text-[11px] font-bold text-rose-500 hover:underline cursor-pointer"
+                    >
+                      Bỏ chọn hết
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {allProviders
+                    .filter(provKey => accounts.some(a => a.provider === provKey))
+                    .map((provKey) => {
+                      const detail = providerDetails[provKey as keyof typeof providerDetails];
+                      const providerConns = accounts.filter(a => a.provider === provKey);
+                      const isExpanded = expandedProviders.includes(provKey);
+                      const activeConnsCount = providerConns.filter(c => selectedAccountIds.includes(c.id)).length;
+                      
+                      return (
+                        <div key={provKey} className="border border-border/55 rounded-lg overflow-hidden transition-all bg-card">
+                          {/* Header toggle expand */}
+                          <button
+                            onClick={() => {
+                              setExpandedProviders(prev => 
+                                prev.includes(provKey) 
+                                  ? prev.filter(p => p !== provKey) 
+                                  : [...prev, provKey]
+                              );
+                            }}
+                            className="w-full flex items-center justify-between p-2.5 bg-secondary/15 hover:bg-secondary/35 transition-colors text-left cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="h-5 w-5 rounded bg-secondary/60 flex items-center justify-center shrink-0 border border-border/60 scale-90">
+                                {detail.logo}
+                              </div>
+                              <span className="text-xs font-bold text-foreground font-display">{detail.name}</span>
+                              <span className="text-[10px] font-bold text-muted-foreground bg-secondary px-1.5 py-0.5 rounded-full select-none">
+                                {activeConnsCount}/{providerConns.length}
+                              </span>
+                            </div>
+                            
+                            <ChevronDown 
+                              className={cn(
+                                "h-3.5 w-3.5 text-muted-foreground transition-transform duration-200", 
+                                isExpanded ? "transform rotate-180" : ""
+                              )} 
+                            />
+                          </button>
+
+                          {/* Expanded account list */}
+                          {isExpanded && (
+                            <div className="p-2.5 border-t border-border/50 bg-secondary/5 space-y-2 animate-fade-in">
+                              <div className="flex flex-wrap gap-1.5">
+                                {providerConns.map((acc) => {
+                                  const isChecked = selectedAccountIds.includes(acc.id);
+                                  return (
+                                    <button
+                                      key={acc.id}
+                                      onClick={() => {
+                                        setSelectedAccountIds(prev => 
+                                          prev.includes(acc.id) 
+                                            ? prev.filter(id => id !== acc.id) 
+                                            : [...prev, acc.id]
+                                        );
+                                      }}
+                                      className={cn(
+                                        "flex items-center gap-1.5 px-2.5 py-1.5 rounded border text-[11px] font-semibold transition-all cursor-pointer select-none",
+                                        isChecked
+                                          ? "bg-primary/10 text-primary border-primary"
+                                          : "bg-secondary/40 text-muted-foreground border-border/60 hover:bg-secondary/80"
+                                      )}
+                                    >
+                                      <div className={cn(
+                                        "w-1.5 h-1.5 rounded-full shrink-0",
+                                        isChecked ? "bg-primary" : "bg-muted-foreground/45"
+                                      )} />
+                                      <span className="truncate max-w-[130px] font-mono leading-none">{acc.email}</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
           </div>
 
           {loading ? (
@@ -161,27 +380,32 @@ export default function KnowledgePage() {
               {filteredDocs.map((doc) => (
                 <div
                   key={doc.id}
-                  className="bg-card border border-border/85 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/45 transition-colors group relative overflow-hidden"
+                  className="bg-card border border-border/85 rounded-xl p-4.5 shadow-premium-sm flex flex-col justify-between hover:border-primary/45 transition-colors group relative overflow-hidden"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2 select-none">
                       {getFileIcon(doc.type)}
-                      <span className="text-[9px] font-bold bg-secondary border px-2 py-0.5 rounded text-muted-foreground shrink-0 uppercase tracking-wider">
+                      <span className="text-[10px] font-bold bg-secondary border px-2 py-0.5 rounded text-muted-foreground shrink-0 uppercase tracking-wider">
                         {doc.type}
                       </span>
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors cursor-pointer" onClick={() => setPreviewDoc(doc)}>
+                      <h4 className="text-sm font-bold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors cursor-pointer" onClick={() => setPreviewDoc(doc)}>
                         {doc.title}
                       </h4>
-                      <p className="text-[10px] text-muted-foreground mt-1 select-none">
-                        Chủ đề: <span className="font-semibold text-foreground/80">{doc.category}</span>
+                      <p className="text-xs text-muted-foreground mt-1.5 select-none flex items-center gap-1.5 flex-wrap">
+                        {doc.appSource && (
+                          <span className="font-semibold text-primary/90 bg-primary/5 border border-primary/15 px-1.5 py-0.5 rounded text-[10px]">{doc.appSource}</span>
+                        )}
+                        {doc.folderPath && (
+                          <span className="text-muted-foreground font-mono text-[10px]">/ {doc.folderPath}</span>
+                        )}
                       </p>
                     </div>
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1 select-none">
                       {doc.tags.map(t => (
-                        <span key={t} className="text-[8px] font-bold bg-primary/5 text-primary border border-primary/10 px-1.5 py-0.5 rounded">
+                        <span key={t} className="text-[10px] font-bold bg-primary/5 text-primary border border-primary/10 px-1.5 py-0.5 rounded">
                           #{t}
                         </span>
                       ))}
@@ -189,13 +413,13 @@ export default function KnowledgePage() {
                   </div>
 
                   {/* Document Footer */}
-                  <div className="border-t border-border/60 pt-3 mt-4 flex items-center justify-between text-[9px] text-muted-foreground select-none">
+                  <div className="border-t border-border/60 pt-3 mt-4 flex items-center justify-between text-[11px] text-muted-foreground select-none">
                     <span className="font-semibold">{doc.size}</span>
                     <button
                       onClick={() => setPreviewDoc(doc)}
-                      className="px-2.5 py-1 rounded bg-secondary hover:bg-secondary/80 text-[10px] font-bold text-primary transition-colors flex items-center gap-0.5 cursor-pointer"
+                      className="px-2.5 py-1.5 rounded bg-secondary hover:bg-secondary/80 text-xs font-bold text-primary transition-colors flex items-center gap-0.5 cursor-pointer"
                     >
-                      <Eye className="h-3 w-3" />
+                      <Eye className="h-3.5 w-3.5" />
                       <span>Xem nội dung</span>
                     </button>
                   </div>
@@ -223,6 +447,12 @@ export default function KnowledgePage() {
                         </Dialog.Title>
                         <p className="text-[10px] text-muted-foreground mt-0.5">
                           Tải lên bởi: <span className="font-bold text-foreground/80">{previewDoc.updatedBy}</span>
+                          {previewDoc.appSource && (
+                            <>
+                              {" "}| Nguồn: <span className="font-bold text-primary">{previewDoc.appSource}</span>
+                              {previewDoc.folderPath && ` / ${previewDoc.folderPath}`}
+                            </>
+                          )}
                         </p>
                       </div>
                     </div>
@@ -239,9 +469,9 @@ export default function KnowledgePage() {
                     <div className="space-y-1">
                       <span className="flex items-center gap-1 font-semibold">
                         <Tag className="h-3.5 w-3.5 text-primary" />
-                        Chủ đề
+                        Nguồn dữ liệu
                       </span>
-                      <p className="font-bold text-foreground/80">{previewDoc.category}</p>
+                      <p className="font-bold text-foreground/80">{previewDoc.appSource || "Hệ thống"}</p>
                     </div>
                     <div className="space-y-1">
                       <span className="flex items-center gap-1 font-semibold">

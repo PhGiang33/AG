@@ -41,17 +41,14 @@ export function CommandPalette() {
   const commandItems = [
     // Pages
     { category: "Trang liên kết", title: "Trang chủ Dashboard", icon: Compass, action: () => handleNavigate("/dashboard"), shortcut: "G D" },
-    { category: "Trang liên kết", title: "Trung tâm AI Chat", icon: MessageSquare, action: () => handleNavigate("/chat"), shortcut: "G C" },
-    { category: "Trang liên kết", title: "Cơ sở tri thức (Knowledge)", icon: BookOpen, action: () => handleNavigate("/knowledge"), shortcut: "G K" },
     { category: "Trang liên kết", title: "Trung tâm Agent", icon: Bot, action: () => handleNavigate("/agents"), shortcut: "G G" },
-    { category: "Trang liên kết", title: "Tài khoản liên kết (Accounts)", icon: Key, action: () => handleNavigate("/connected-accounts"), shortcut: "G N" },
+    { category: "Trang liên kết", title: "Cơ sở tri thức (Knowledge)", icon: BookOpen, action: () => handleNavigate("/knowledge"), shortcut: "G K" },
     { category: "Trang liên kết", title: "Cài đặt hệ thống (Settings)", icon: Settings, action: () => handleNavigate("/settings"), shortcut: "G S" },
     ...(user.role === "Admin"
       ? [{ category: "Trang liên kết", title: "Bảng quản trị (Admin Panel)", icon: Shield, action: () => handleNavigate("/admin"), shortcut: "G M" }]
       : []),
 
     // Actions
-    { category: "Thao tác nhanh", title: "Tạo hội thoại Chat mới", icon: MessageSquare, action: handleCreateChat, shortcut: "N C" },
     { category: "Thao tác nhanh", title: "Chuyển sang Dark Mode", icon: Moon, action: () => { setTheme("dark"); setIsOpen(false); } },
     { category: "Thao tác nhanh", title: "Chuyển sang Light Mode", icon: Sun, action: () => { setTheme("light"); setIsOpen(false); } },
   ];

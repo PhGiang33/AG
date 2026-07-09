@@ -21,11 +21,8 @@ export function Sidebar() {
 
   const navItems = [
     { name: "Tổng quan (Dashboard)", href: "/dashboard", icon: Compass },
-    { name: "Trung tâm AI Chat", href: "/chat", icon: MessageSquare },
-    { name: "Cơ sở tri thức (Knowledge)", href: "/knowledge", icon: BookOpen },
     { name: "Trung tâm Agent", href: "/agents", icon: Bot },
-    { name: "Thư viện Prompts", href: "/prompt-library", icon: TerminalSquare },
-    { name: "Dịch vụ liên kết (Accounts)", href: "/connected-accounts", icon: Key },
+    { name: "Cơ sở tri thức (Knowledge)", href: "/knowledge", icon: BookOpen },
     { name: "Cấu hình (Settings)", href: "/settings", icon: Settings },
   ];
 
@@ -110,15 +107,6 @@ export function Sidebar() {
                 );
               })}
             </nav>
-            <div className="border-t border-border/80 pt-4 mt-auto">
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-rose-500 hover:bg-rose-50/10 transition-colors"
-              >
-                <LogOut className="h-5 w-5 shrink-0" />
-                <span>Đăng xuất</span>
-              </button>
-            </div>
           </motion.aside>
         )}
       </AnimatePresence>
@@ -136,7 +124,7 @@ export function Sidebar() {
         <div
           className={cn(
             "flex items-center mb-6 py-2 border-b border-border/40 select-none",
-            sidebarCollapsed ? "justify-center px-0" : "justify-between px-2"
+            sidebarCollapsed ? "justify-center px-0" : "px-2"
           )}
         >
           <div className="flex items-center gap-3">
@@ -149,14 +137,6 @@ export function Sidebar() {
               </span>
             )}
           </div>
-          {!sidebarCollapsed && (
-            <button
-              onClick={toggleSidebar}
-              className="p-1 rounded-md hover:bg-secondary border border-transparent hover:border-border/60 text-muted-foreground hover:text-foreground transition-all cursor-pointer"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          )}
         </div>
 
         {/* Navigation Menu */}
@@ -203,43 +183,20 @@ export function Sidebar() {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="border-t border-border/60 pt-4 mt-auto">
-          {sidebarCollapsed ? (
-            <div className="flex flex-col items-center gap-3">
-              <button
-                onClick={toggleSidebar}
-                className="p-1 rounded-md hover:bg-secondary border border-border/40 text-muted-foreground hover:text-foreground cursor-pointer"
-              >
+        <div className="border-t border-border/60 pt-4 mt-auto select-none">
+          <div className={cn("flex", sidebarCollapsed ? "justify-center" : "justify-end px-2")}>
+            <button
+              onClick={toggleSidebar}
+              className="p-1.5 rounded-md hover:bg-secondary border border-border/40 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+              title={sidebarCollapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
+            >
+              {sidebarCollapsed ? (
                 <ChevronRight className="h-4 w-4" />
-              </button>
-              <button
-                onClick={handleLogout}
-                className="p-2.5 rounded-lg text-rose-500 hover:bg-rose-50/10 cursor-pointer"
-                title="Đăng xuất"
-              >
-                <LogOut className="h-5 w-5" />
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 px-2 py-1 bg-secondary/30 border border-border/40 rounded-lg">
-                <div className="h-6 w-6 rounded-md bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center uppercase shrink-0">
-                  {user.role.slice(0, 2)}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold truncate text-foreground">{user.name}</p>
-                  <p className="text-[10px] text-muted-foreground truncate">{user.role}</p>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-rose-500 hover:bg-rose-50/10 transition-colors cursor-pointer"
-              >
-                <LogOut className="h-5 w-5 shrink-0" />
-                <span>Đăng xuất</span>
-              </button>
-            </div>
-          )}
+              ) : (
+                <ChevronLeft className="h-4 w-4" />
+              )}
+            </button>
+          </div>
         </div>
       </motion.aside>
     </>
