@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, ReactNode } from 'react';
-import { Department, SystemRole } from '@/lib/utils/permissions';
+import { Department, SystemRole } from '@/permissions';
 
 interface User {
   id: string;
