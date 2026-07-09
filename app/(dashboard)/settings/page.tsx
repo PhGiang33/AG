@@ -13,12 +13,15 @@ export default function SettingsPage() {
   
   const { accounts, isConnecting, connectingProvider, connectAccount, disconnectAccount, toggleAccountActive } = useAccountStore();
   
-  const [activeTab, setActiveTab] = useState<"profile" | "theme" | "notification" | "ai" | "accounts">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "theme" | "notification" | "ai" | "accounts" | "security">("profile");
   
-  const [nameInput, setNameInput] = useState(user.name);
-  const [deptInput, setDeptInput] = useState(user.department || "Ban Công Nghệ Thông Tin");
   const [llmPref, setLlmPref] = useState("gpt-4o");
   const [notifSound, setNotifSound] = useState(true);
+
+  // State for password change
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // Accounts state ported
   const [accountsLoading, setAccountsLoading] = useState(true);
@@ -35,6 +38,9 @@ export default function SettingsPage() {
       if (hash === "#accounts") {
         setActiveTab("accounts");
       }
+      if (hash === "#security") {
+        setActiveTab("security");
+      }
     }
   }, []);
 
@@ -46,26 +52,22 @@ export default function SettingsPage() {
     }
   }, [activeTab]);
 
-  const handleSaveProfile = (e: React.FormEvent) => {
-    e.preventDefault();
-    addNotification("Cập nhật hồ sơ", "Hồ sơ cá nhân của bạn đã được lưu lại thành công.");
-    alert("Đã lưu cài đặt hồ sơ cá nhân!");
-  };
-
   const handleStartConnect = (provider: string) => {
     setSelectedProvider(provider);
-    setEmailInput(
-      provider === "google"
-        ? "khang.nguyen@vinacorp.vn"
-        : provider === "microsoft"
-        ? "khang.n@vinacorp.onmicrosoft.com"
-        : `khang.nguyen@${provider}.vinacorp.vn`
-    );
+    // Enforce connecting only the logged-in user's account email
+    setEmailInput(user.email);
     setOauthStep(1);
     setOauthModalOpen(true);
   };
 
   const handleRunOauthFlow = async () => {
+    // SECURITY CHECK: Double-check that the email matches the logged-in user's email.
+    // This prevents a user from connecting another person's account (e.g., their manager's).
+    if (emailInput !== user.email) {
+      addNotification("Lỗi bảo mật", "Bạn chỉ có thể kết nối tài khoản có cùng địa chỉ email với tài khoản đăng nhập của bạn.");
+      setOauthModalOpen(false);
+      return;
+    }
     setOauthStep(2); // Show connecting status
     await connectAccount(
       selectedProvider!,
@@ -83,6 +85,22 @@ export default function SettingsPage() {
     disconnectAccount(id);
     setConfirmDeleteId(null);
     addNotification("Hủy kết nối", "Đã xóa liên kết tài khoản thành công.");
+  };
+
+  const handleSavePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      addNotification("Lỗi", "Mật khẩu mới không khớp. Vui lòng kiểm tra lại.");
+      return;
+    }
+    if (newPassword.length < 8) {
+      addNotification("Lỗi", "Mật khẩu mới phải có ít nhất 8 ký tự.");
+      return;
+    }
+    addNotification("Thành công", "Mật khẩu của bạn đã được thay đổi thành công.");
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
   };
 
   const providerDetails = {
@@ -147,6 +165,7 @@ export default function SettingsPage() {
     { id: "notification", name: "Thông báo", icon: Bell },
     { id: "ai", name: "Cấu hình AI", icon: Cpu },
     { id: "accounts", name: "Dịch vụ liên kết", icon: Key },
+    { id: "security", name: "Bảo mật & Mật khẩu", icon: Shield },
   ];
 
   return (
@@ -192,27 +211,27 @@ export default function SettingsPage() {
         <div className="md:col-span-3 bg-card border border-border/80 rounded-xl p-5 shadow-premium-sm">
           {/* Tab 1: Profile */}
           {activeTab === "profile" && (
-            <form onSubmit={handleSaveProfile} className="space-y-4">
+            <div className="space-y-4">
               <h3 className="text-xs font-bold text-foreground select-none">Hồ sơ người dùng</h3>
-              <p className="text-[11px] text-muted-foreground select-none">Cập nhật thông tin nhận diện nhân sự nội bộ.</p>
+              <p className="text-[11px] text-muted-foreground select-none">Thông tin định danh của bạn được đồng bộ từ hệ thống Nhân sự và không thể thay đổi tại đây.</p>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-muted-foreground select-none">Họ và tên</label>
                   <input
                     type="text"
-                    value={nameInput}
-                    onChange={(e) => setNameInput(e.target.value)}
-                    className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                    value={user.name}
+                    disabled
+                    className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-xs text-muted-foreground cursor-not-allowed select-all"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-muted-foreground select-none">Phòng ban</label>
                   <input
                     type="text"
-                    value={deptInput}
-                    onChange={(e) => setDeptInput(e.target.value)}
-                    className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                    value={user.department || "Chưa phân ban"}
+                    disabled
+                    className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-xs text-muted-foreground cursor-not-allowed select-all"
                   />
                 </div>
               </div>
@@ -226,14 +245,7 @@ export default function SettingsPage() {
                   className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-xs text-muted-foreground cursor-not-allowed select-all"
                 />
               </div>
-
-              <button
-                type="submit"
-                className="mt-4 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer select-none"
-              >
-                Lưu hồ sơ
-              </button>
-            </form>
+            </div>
           )}
 
           {/* Tab 2: Theme */}
@@ -352,6 +364,56 @@ export default function SettingsPage() {
             </div>
           )}
 
+          {/* Tab 6: Security */}
+          {activeTab === "security" && (
+            <form onSubmit={handleSavePassword} className="space-y-4 select-none">
+              <h3 className="text-xs font-bold text-foreground">Thay đổi mật khẩu</h3>
+              <p className="text-[11px] text-muted-foreground">
+                Để đảm bảo an toàn, hãy sử dụng mật khẩu mạnh (tối thiểu 8 ký tự) và thay đổi định kỳ.
+              </p>
+
+              <div className="space-y-1.5 pt-2">
+                <label className="text-[10px] font-bold text-muted-foreground">Mật khẩu hiện tại</label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Nhập mật khẩu hiện tại của bạn"
+                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-muted-foreground">Mật khẩu mới</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nhập mật khẩu mới"
+                    className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-muted-foreground">Xác nhận mật khẩu mới</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Nhập lại mật khẩu mới"
+                    className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="mt-4 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer select-none"
+              >
+                Lưu mật khẩu
+              </button>
+            </form>
+          )}
 
 
           {/* Tab 5: Connected Accounts */}
@@ -444,6 +506,15 @@ export default function SettingsPage() {
                                         {formatRelativeTime(acc.lastSync)}
                                       </span>
                                     </div>
+
+                                    {/* Permissions tags */}
+                                    <div className="flex flex-wrap gap-1 mt-2.5">
+                                      {acc.permissions?.map((perm) => (
+                                        <span key={perm} className="text-[9px] font-bold bg-primary/5 text-primary/80 border border-primary/10 px-1.5 py-0.5 rounded">
+                                          {perm}
+                                        </span>
+                                      ))}
+                                    </div>
                                   </div>
 
                                   <div className="flex items-center shrink-0">
@@ -515,15 +586,15 @@ export default function SettingsPage() {
                 {oauthStep === 1 && (
                   <>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Cổng thông tin AI Portal cần cấp quyền đọc để thực hiện trích xuất dữ liệu. Vui lòng điền email tài khoản doanh nghiệp của bạn:
+                      Bạn sẽ được chuyển hướng đến trang đăng nhập của nhà cung cấp để xác thực. <strong className="text-foreground">Chỉ tài khoản có email trùng với email đăng nhập của bạn mới được chấp nhận.</strong>
                     </p>
                     <div className="space-y-1.5 mt-2">
                       <label className="text-[10px] font-bold text-muted-foreground">Email tài khoản</label>
                       <input
                         type="email"
                         value={emailInput}
-                        onChange={(e) => setEmailInput(e.target.value)}
-                        className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                        disabled
+                        className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-xs text-muted-foreground cursor-not-allowed select-all"
                       />
                     </div>
                     <div className="flex justify-end gap-2 mt-4 pt-2">
