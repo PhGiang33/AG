@@ -1,26 +1,50 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Database, Sparkles, FileText, CheckCircle2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Loader2, Database, Sparkles, FileText, CheckCircle2, Link2, Calendar, Search, Mail, Loader } from "lucide-react";
+import { ThinkingStep } from "@/lib/types";
 
-export function ThinkingAnimation() {
+interface ThinkingAnimationProps {
+  steps?: ThinkingStep[];
+}
+
+const iconMap: Record<string, any> = {
+  database: Database,
+  calendar: Calendar,
+  search: Search,
+  sparkles: Sparkles,
+  mail: Mail,
+  link: Link2,
+  loader: Loader
+};
+
+export function ThinkingAnimation({ steps: propsSteps }: ThinkingAnimationProps) {
   const [step, setStep] = useState(0);
 
-  const steps = [
-    { label: "Đang phân tích ý định câu hỏi...", icon: Sparkles },
-    { label: "Đang truy xuất tri thức phù hợp từ Google Drive...", icon: Database },
-    { label: "Đang phân tích tài liệu chính sách...", icon: FileText },
-    { label: "Đang tổng hợp và biên soạn câu trả lời...", icon: Loader2 }
+  const defaultSteps = [
+    { label: "Đang phân tích ý định câu hỏi...", icon: "sparkles" },
+    { label: "Đang truy xuất tri thức phù hợp từ Google Drive...", icon: "database" },
+    { label: "Đang phân tích tài liệu chính sách...", icon: "filetext" },
+    { label: "Đang tổng hợp và biên soạn câu trả lời...", icon: "loader" }
   ];
 
+  const steps = propsSteps || defaultSteps;
+
   useEffect(() => {
+    setStep(0);
     const timer = setInterval(() => {
       setStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
-    }, 1200);
+    }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [steps]);
+
+  const getIcon = (iconName: string) => {
+    const LowerName = iconName.toLowerCase();
+    if (iconMap[LowerName]) return iconMap[LowerName];
+    if (LowerName === "filetext") return FileText;
+    return Loader2;
+  };
 
   return (
     <div className="flex gap-3 max-w-3xl mx-auto py-2">
@@ -38,7 +62,7 @@ export function ThinkingAnimation() {
         
         <div className="space-y-2">
           {steps.map((s, idx) => {
-            const Icon = s.icon;
+            const IconComponent = getIcon(s.icon);
             const isCompleted = step > idx;
             const isCurrent = step === idx;
             const isPending = step < idx;
@@ -55,7 +79,7 @@ export function ThinkingAnimation() {
                 ) : isCurrent ? (
                   <Loader2 className="h-3.5 w-3.5 text-primary animate-spin shrink-0" />
                 ) : (
-                  <Icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <IconComponent className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                 )}
                 <span
                   className={

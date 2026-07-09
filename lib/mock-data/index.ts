@@ -1,4 +1,4 @@
-import { User, Conversation, ConnectedAccount, KnowledgeDoc, Workflow, PromptTemplate, AuditLog, SystemStat } from "../types";
+import { User, Conversation, ConnectedAccount, KnowledgeDoc, Workflow, PromptTemplate, AuditLog, SystemStat, CalendarEvent, AgentDefinition, EmailItem, ERPStockItem, CRMOpportunity, ThinkingStep } from "../types";
 
 export const mockUser: User = {
   id: "u1",
@@ -416,3 +416,137 @@ export const mockFetch = async <T>(data: T, delayMs: number = 600): Promise<T> =
     }, delayMs);
   });
 };
+
+export const mockCalendarEvents: CalendarEvent[] = [
+  { id: "e1", date: "2026-07-09", startTime: "09:00", endTime: "10:00", title: "Họp giao ban Ban CNTT VinaCorp", location: "Phòng họp A, Tầng 5", type: "internal" },
+  { id: "e2", date: "2026-07-09", startTime: "14:00", endTime: "15:30", title: "Review kiến trúc AI Agent Enterprise", location: "Google Meet", type: "internal" },
+  { id: "e3", date: "2026-07-10", startTime: "10:00", endTime: "11:00", title: "Họp đàm phán ngân sách với Ban Tài chính", location: "Phòng họp B, Tầng 4", type: "internal" },
+  { id: "e4", date: "2026-07-12", startTime: "09:00", endTime: "11:00", title: "Thảo luận Hợp đồng phân phối đại lý Thành Phát", location: "Google Meet", type: "client" },
+  { id: "e5", date: "2026-07-13", startTime: "15:00", endTime: "16:00", title: "Lịch cá nhân - Kiểm tra sức khỏe định kỳ", location: "Bệnh viện Đa khoa VinaMec", type: "personal" },
+  { id: "e6", date: "2026-07-14", startTime: "14:00", endTime: "15:00", title: "Lập Demo cho Ban điều hành", location: "Phòng họp lớn", type: "internal" },
+  { id: "e7", date: "2026-07-15", startTime: "10:30", endTime: "12:00", title: "Kick-off dự án SmartAI Hub Giai đoạn 2", location: "Google Meet", type: "client" }
+];
+
+
+export const mockEmails: EmailItem[] = [
+  { id: "em1", from: "Trần Thị Lan (Pháp chế)", subject: "Phản hồi về phụ lục Hợp đồng đại lý Thành Phát", summary: "Đã rà soát xong Điều khoản bảo mật và lãi chậm thanh toán của đại lý...", unread: true, date: "09:15" },
+  { id: "em2", from: "Google Workspace Security", subject: "Cảnh báo bảo mật: Thiết bị mới đăng nhập", summary: "Phát hiện đăng nhập mới từ địa chỉ IP 14.226.45.102 tại Hà Nội...", unread: true, date: "08:30" },
+  { id: "em3", from: "Nguyễn Lê Hoàng (Tài chính)", subject: "Báo cáo chi phí vận hành API LLM Quý 1-2026", summary: "Gửi anh Khang file chi tiết chi phí OpenAI và Anthropic tháng 3...", unread: false, date: "Hôm qua" },
+  { id: "em4", from: "Phạm Văn Minh (Sales)", subject: "Yêu cầu duyệt báo giá đại lý Thành Phát", summary: "Gửi anh Khang báo giá phần mềm SmartAI Hub áp dụng chiết khấu 30%...", unread: false, date: "Hôm qua" }
+];
+
+
+export const mockERPStock: ERPStockItem[] = [
+  { id: "st1", name: "Phần mềm SmartAI Hub Enterprise License", sku: "SAI-ENT-01", stock: 999, location: "Cloud Storage", price: 150000000 },
+  { id: "st2", name: "Thiết bị Gateway AI Gateway-V1", sku: "GW-V1-HW", stock: 45, location: "Kho chính tầng 2", price: 25000000 },
+  { id: "st3", name: "Gói bảo trì hệ thống 12 tháng (Maintenance)", sku: "SAI-MNT-12", stock: 120, location: "Service Portal", price: 15000000 }
+];
+
+
+export const mockCRMOpportunities: CRMOpportunity[] = [
+  { id: "op1", name: "Cung cấp SmartAI Hub - Vietcombank", client: "Ngân hàng Vietcombank", value: 45000000000, stage: "Negotiation", closeDate: "30/07/2026" },
+  { id: "op2", name: "Tích hợp Odoo ERP - Vietnam Airlines", client: "Vietnam Airlines", value: 30000000000, stage: "Proposal", closeDate: "15/08/2026" },
+  { id: "op3", name: "Triển khai Copilot - Hòa Bình Group", client: "Tập đoàn Hòa Bình", value: 15000000000, stage: "Closed Won", closeDate: "05/07/2026" }
+];
+
+export const mockAgents: AgentDefinition[] = [
+  {
+    id: "agent-calendar",
+    name: "Agent Calendar",
+    tool: "Google Calendar",
+    toolProvider: "google",
+    description: "Tra cứu, sắp xếp và nhắc lịch họp từ tài khoản Google Calendar của bạn.",
+    status: "connected",
+    suggestedPrompts: [
+      "Tuần này tôi có những lịch gì?",
+      "Ngày mai tôi có bị trùng lịch không?",
+      "Đặt lịch nhắc họp với Ban Tài chính vào thứ Sáu"
+    ],
+    lockedDataSource: "Google Calendar"
+  },
+  {
+    id: "agent-email",
+    name: "Agent Email",
+    tool: "Gmail Suite",
+    toolProvider: "google",
+    description: "Tóm tắt thư chưa đọc, tìm kiếm email của đối tác và tự động soạn thảo thư trả lời.",
+    status: "connected",
+    suggestedPrompts: [
+      "Tóm tắt email chưa đọc hôm nay",
+      "Có email nào từ đối tác Thành Phát không?"
+    ],
+    lockedDataSource: "Gmail Suite"
+  },
+  {
+    id: "agent-erp",
+    name: "Agent ERP",
+    tool: "ERP Odoo",
+    toolProvider: "odoo",
+    description: "Tra cứu chi tiết tồn kho phần cứng, danh mục sản phẩm và lập báo giá bán hàng nhanh.",
+    status: "connected",
+    suggestedPrompts: [
+      "Kiểm tra tồn kho sản phẩm SmartAI Hub",
+      "Lập báo giá cho khách hàng ABC Corp"
+    ],
+    lockedDataSource: "ERP Odoo VinaCorp"
+  },
+  {
+    id: "agent-crm",
+    name: "Agent CRM",
+    tool: "Salesforce CRM",
+    toolProvider: "salesforce",
+    description: "Kiểm tra tình hình các cơ hội bán hàng sắp đóng và tóm tắt lịch sử tương tác khách hàng.",
+    status: "error",
+    suggestedPrompts: [
+      "Cơ hội bán hàng nào sắp đóng trong tháng này?",
+      "Tóm tắt lịch sử tương tác với khách hàng XYZ"
+    ],
+    lockedDataSource: "Salesforce CRM"
+  },
+  {
+    id: "agent-docs",
+    name: "Agent Tài liệu",
+    tool: "Google Drive / Knowledge Base",
+    toolProvider: "google",
+    description: "Tìm kiếm thông tin chính sách, quét rủi ro hợp đồng và tóm tắt tệp tin pdf/docx.",
+    status: "disconnected",
+    suggestedPrompts: [
+      "Tìm hợp đồng đại lý mới nhất",
+      "Tóm tắt báo cáo tài chính Q1"
+    ],
+    lockedDataSource: "Quy định & Chính sách"
+  }
+];
+
+export const agentThinkingSteps: Record<string, ThinkingStep[]> = {
+  "agent-calendar": [
+    { label: "Đang kết nối tới Google Calendar...", icon: "link" },
+    { label: "Đang đọc danh sách lịch từ 09/07/2026...", icon: "calendar" },
+    { label: "Đang phát hiện 7 sự kiện, kiểm tra trùng lịch...", icon: "search" },
+    { label: "Đang tổng hợp lịch theo từng ngày...", icon: "sparkles" }
+  ],
+  "agent-email": [
+    { label: "Đang kết nối an toàn tới máy chủ Gmail...", icon: "link" },
+    { label: "Đang quét danh sách thư chưa đọc hôm nay...", icon: "mail" },
+    { label: "Đang trích xuất nội dung thư và lập tóm tắt...", icon: "search" },
+    { label: "Đang phân loại email rủi ro...", icon: "sparkles" }
+  ],
+  "agent-erp": [
+    { label: "Kết nối hệ thống Odoo ERP thông qua API...", icon: "link" },
+    { label: "Quét cơ sở dữ liệu tồn kho sản phẩm...", icon: "database" },
+    { label: "Đọc cấu hình đơn giá và định vị...", icon: "search" },
+    { label: "Trình diễn dữ liệu tồn kho dưới dạng bảng...", icon: "sparkles" }
+  ],
+  "agent-crm": [
+    { label: "Kết nối cổng thông tin Salesforce CRM...", icon: "link" },
+    { label: "Đọc danh sách Opportunities Close-Date...", icon: "database" },
+    { label: "Phát hiện lỗi Token hết hạn, đang kiểm tra cấu hình...", icon: "loader" }
+  ],
+  "agent-docs": [
+    { label: "Đang truy vấn Google Drive doanh nghiệp...", icon: "link" },
+    { label: "Đang tải xuống tệp văn bản mẫu mới nhất...", icon: "database" },
+    { label: "Đang quét rủi ro pháp lý bằng mô hình học máy...", icon: "search" },
+    { label: "Tổng hợp điều khoản phạt đền...", icon: "sparkles" }
+  ]
+};
+

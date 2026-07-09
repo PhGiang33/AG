@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Search, Compass, MessageSquare, BookOpen, Settings, Shield, Moon, Sun, ArrowRight, X, Terminal, Cpu } from "lucide-react";
+import { Search, Compass, MessageSquare, BookOpen, Settings, Shield, Moon, Sun, ArrowRight, X, Terminal, Cpu, Bot, Key } from "lucide-react";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 import { useCommandStore, useAppStore, useChatStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
@@ -43,8 +43,8 @@ export function CommandPalette() {
     { category: "Trang liên kết", title: "Trang chủ Dashboard", icon: Compass, action: () => handleNavigate("/dashboard"), shortcut: "G D" },
     { category: "Trang liên kết", title: "Trung tâm AI Chat", icon: MessageSquare, action: () => handleNavigate("/chat"), shortcut: "G C" },
     { category: "Trang liên kết", title: "Cơ sở tri thức (Knowledge)", icon: BookOpen, action: () => handleNavigate("/knowledge"), shortcut: "G K" },
-    { category: "Trang liên kết", title: "Quản lý luồng công việc (Workflow)", icon: Terminal, action: () => handleNavigate("/workflow"), shortcut: "G W" },
-    { category: "Trang liên kết", title: "Tài khoản liên kết (Accounts)", icon: Cpu, action: () => handleNavigate("/connected-accounts"), shortcut: "G A" },
+    { category: "Trang liên kết", title: "Trung tâm Agent", icon: Bot, action: () => handleNavigate("/agents"), shortcut: "G G" },
+    { category: "Trang liên kết", title: "Tài khoản liên kết (Accounts)", icon: Key, action: () => handleNavigate("/connected-accounts"), shortcut: "G N" },
     { category: "Trang liên kết", title: "Cài đặt hệ thống (Settings)", icon: Settings, action: () => handleNavigate("/settings"), shortcut: "G S" },
     ...(user.role === "Admin"
       ? [{ category: "Trang liên kết", title: "Bảng quản trị (Admin Panel)", icon: Shield, action: () => handleNavigate("/admin"), shortcut: "G M" }]

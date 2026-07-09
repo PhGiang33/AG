@@ -17,6 +17,10 @@ export interface Message {
   status?: "sending" | "sent" | "error";
   sources?: string[]; // IDs of referenced knowledge docs
   agentLogs?: string[]; // Steps showing thinking details
+  agentData?: {
+    type: "calendar" | "email" | "erp" | "crm";
+    data: any;
+  };
 }
 
 export interface Conversation {
@@ -26,6 +30,7 @@ export interface Conversation {
   updatedAt: Date;
   messages: Message[];
   isPinned?: boolean;
+  agentId?: string; // Optional locked agent id
 }
 
 export interface ConnectedAccount {
@@ -105,3 +110,57 @@ export interface SystemStat {
   agentUsage: { name: string; count: number }[];
   userActivity: { hour: string; count: number }[];
 }
+
+export interface ThinkingStep {
+  label: string;
+  icon: string; // "database" | "calendar" | "search" | "sparkles" | "mail" | "link" | "loader"
+}
+
+export interface AgentDefinition {
+  id: string;
+  name: string;
+  tool: string;
+  toolProvider: "google" | "microsoft" | "odoo" | "salesforce";
+  description: string;
+  status: "connected" | "disconnected" | "error";
+  suggestedPrompts: string[];
+  lockedDataSource: string; // Document ID or data source description
+}
+
+export interface CalendarEvent {
+  id: string;
+  date: string; // "2026-07-09"
+  startTime: string;
+  endTime: string;
+  title: string;
+  location: string;
+  type: "internal" | "client" | "personal";
+}
+
+export interface EmailItem {
+  id: string;
+  from: string;
+  subject: string;
+  summary: string;
+  unread: boolean;
+  date: string;
+}
+
+export interface ERPStockItem {
+  id: string;
+  name: string;
+  sku: string;
+  stock: number;
+  location: string;
+  price: number;
+}
+
+export interface CRMOpportunity {
+  id: string;
+  name: string;
+  client: string;
+  value: number;
+  stage: "Qualification" | "Proposal" | "Negotiation" | "Closed Won" | "Closed Lost";
+  closeDate: string;
+}
+

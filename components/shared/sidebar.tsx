@@ -2,7 +2,7 @@
 
 import { useAppStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
-import { Compass, MessageSquare, BookOpen, Terminal, Cpu, Settings, Shield, ChevronLeft, ChevronRight, Menu, LogOut, TerminalSquare } from "lucide-react";
+import { Compass, MessageSquare, BookOpen, Bot, Key, Settings, Shield, ChevronLeft, ChevronRight, Menu, LogOut, TerminalSquare } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,9 +23,9 @@ export function Sidebar() {
     { name: "Tổng quan (Dashboard)", href: "/dashboard", icon: Compass },
     { name: "Trung tâm AI Chat", href: "/chat", icon: MessageSquare },
     { name: "Cơ sở tri thức (Knowledge)", href: "/knowledge", icon: BookOpen },
-    { name: "Luồng công việc (Workflow)", href: "/workflow", icon: Terminal },
+    { name: "Trung tâm Agent", href: "/agents", icon: Bot },
     { name: "Thư viện Prompts", href: "/prompt-library", icon: TerminalSquare },
-    { name: "Dịch vụ liên kết (Accounts)", href: "/connected-accounts", icon: Cpu },
+    { name: "Dịch vụ liên kết (Accounts)", href: "/connected-accounts", icon: Key },
     { name: "Cấu hình (Settings)", href: "/settings", icon: Settings },
   ];
 

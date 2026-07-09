@@ -8,6 +8,7 @@ import { cn, formatDate } from "@/lib/utils";
 import { Copy, Check, FileText, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { AgentResultCard } from "./AgentResultCard";
 
 interface MessageBubbleProps {
   message: Message;
@@ -253,7 +254,18 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               : "bg-secondary/30 text-foreground border-border/80 border-l-[3px] border-l-primary/75 rounded-tl-none mr-auto"
           )}
         >
-          {isUser ? <p className="whitespace-pre-wrap">{message.content}</p> : renderContent(message.content)}
+          {isUser ? (
+            <p className="whitespace-pre-wrap">{message.content}</p>
+          ) : (
+            <div className="space-y-3.5">
+              {message.agentData && (
+                <div className="mb-3">
+                  <AgentResultCard type={message.agentData.type} data={message.agentData.data} />
+                </div>
+              )}
+              <div>{renderContent(message.content)}</div>
+            </div>
+          )}
         </div>
 
         {/* Dynamic citation cards for Assistant bubbles */}

@@ -45,12 +45,12 @@ interface ChatState {
   stopGenerationFlag: boolean;
   voiceRecordingState: "idle" | "recording" | "processing";
   setActiveConversationId: (id: string | null) => void;
-  addConversation: (title: string) => string;
+  addConversation: (title: string, agentId?: string) => string;
   deleteConversation: (id: string) => void;
   renameConversation: (id: string, newTitle: string) => void;
   pinConversation: (id: string) => void;
   sendMessage: (content: string, simulateReply: (userMsgId: string) => void) => void;
-  addSystemMessage: (convId: string, content: string, sources?: string[]) => void;
+  addSystemMessage: (convId: string, content: string, sources?: string[], agentData?: { type: "calendar" | "email" | "erp" | "crm"; data: any }) => void;
   toggleSource: (sourceId: string) => void;
   clearSources: () => void;
   setIsGenerating: (isGenerating: boolean) => void;
@@ -66,14 +66,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
   stopGenerationFlag: false,
   voiceRecordingState: "idle",
   setActiveConversationId: (id) => set({ activeConversationId: id, stopGenerationFlag: false }),
-  addConversation: (title) => {
+  addConversation: (title, agentId) => {
     const id = "c_" + Date.now();
     const newConv: Conversation = {
       id,
       title,
       createdAt: new Date(),
       updatedAt: new Date(),
-      messages: []
+      messages: [],
+      agentId
     };
     set((state) => ({
       conversations: [newConv, ...state.conversations],
@@ -125,7 +126,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     simulateReply(userMsg.id);
   },
-  addSystemMessage: (convId, content, sources) => set((state) => ({
+  addSystemMessage: (convId, content, sources, agentData) => set((state) => ({
     conversations: state.conversations.map((c) => {
       if (c.id === convId) {
         return {
@@ -137,7 +138,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
               role: "assistant",
               content,
               timestamp: new Date(),
-              sources
+              sources,
+              agentData
             }
           ],
           updatedAt: new Date()

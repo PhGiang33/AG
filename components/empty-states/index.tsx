@@ -8,27 +8,53 @@ interface EmptyStateProps {
 }
 
 // 1. Empty Chat State
-export function EmptyChatState({ onAction }: { onAction: (prompt: string) => void }) {
-  const suggestions = [
+import { mockAgents } from "@/lib/mock-data";
+import { Cpu, Calendar, Mail, FileText, Server, Shield } from "lucide-react";
+
+// 1. Empty Chat State
+export function EmptyChatState({ onAction, agentId }: { onAction: (prompt: string) => void; agentId?: string }) {
+  const agent = agentId ? mockAgents.find((a) => a.id === agentId) : null;
+
+  const defaultSuggestions = [
     "Tóm tắt quy định nghỉ phép năm của VinaCorp",
     "Phân tích dữ liệu doanh thu Quý 1 từ báo cáo kiểm toán",
     "Kiểm tra rủi ro hợp đồng đại lý phân phối 2026",
     "Soạn thảo email đề xuất hợp tác kinh doanh gửi Thành Phát"
   ];
 
+  const suggestions = agent ? agent.suggestedPrompts : defaultSuggestions;
+  const title = agent ? agent.name : "Trợ lý ảo AI Doanh nghiệp";
+  const desc = agent
+    ? `Trò chuyện trực tiếp với ${agent.name} kết nối qua ${agent.tool}. ${agent.description}`
+    : "Chào mừng anh Khang! Hãy đặt câu hỏi hoặc chọn một trong những chủ đề gợi ý dưới đây để phân tích dữ liệu, tóm tắt tài liệu pháp lý hoặc tự động hóa công việc.";
+
+  const getAgentIcon = () => {
+    if (!agent) return <MessageSquare className="h-8 w-8" />;
+    switch (agent.toolProvider) {
+      case "google":
+        return agent.id === "agent-calendar" ? <Calendar className="h-8 w-8" /> : <Mail className="h-8 w-8" />;
+      case "odoo":
+        return <Server className="h-8 w-8" />;
+      case "salesforce":
+        return <Shield className="h-8 w-8" />;
+      default:
+        return <Cpu className="h-8 w-8" />;
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto py-12 px-4">
+    <div className="flex flex-col items-center justify-center text-center max-w-2xl mx-auto py-12 px-4 select-none">
       {/* Premium custom SVG / Icon design */}
       <div className="relative mb-6">
         <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse-glow" />
         <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-tr from-primary to-violet-400 text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20">
-          <MessageSquare className="h-8 w-8" />
+          {getAgentIcon()}
         </div>
       </div>
       
-      <h2 className="text-xl font-bold text-foreground">Trợ lý ảo AI Doanh nghiệp</h2>
+      <h2 className="text-xl font-bold text-foreground font-display">{title}</h2>
       <p className="text-sm text-muted-foreground mt-2 max-w-md">
-        Chào mừng anh Khang! Hãy đặt câu hỏi hoặc chọn một trong những chủ đề gợi ý dưới đây để phân tích dữ liệu, tóm tắt tài liệu pháp lý hoặc tự động hóa công việc.
+        {desc}
       </p>
 
       {/* Suggested Prompts Cards */}
