@@ -250,7 +250,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             "rounded-xl px-4 py-3 border shadow-premium-sm text-xs leading-relaxed relative",
             isUser
               ? "bg-primary text-primary-foreground border-primary rounded-tr-none ml-auto"
-              : "bg-card text-foreground border-border/80 rounded-tl-none mr-auto"
+              : "bg-secondary/30 text-foreground border-border/80 border-l-[3px] border-l-primary/75 rounded-tl-none mr-auto"
           )}
         >
           {isUser ? <p className="whitespace-pre-wrap">{message.content}</p> : renderContent(message.content)}

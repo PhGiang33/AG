@@ -122,25 +122,30 @@ export function ChatInput({ onSend }: ChatInputProps) {
       {/* Input panel layout */}
       <div className="bg-card border border-border rounded-xl p-2.5 shadow-premium-md relative">
         {voiceRecordingState === "recording" && (
-          <div className="absolute inset-0 bg-card rounded-xl flex items-center justify-between px-6 z-10">
-            <div className="flex items-center gap-3">
-              <span className="flex h-3.5 w-3.5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-rose-500"></span>
-              </span>
-              <span className="text-xs text-rose-500 font-bold animate-pulse">
-                Đang ghi âm giọng nói của bạn...
+          <div className="absolute inset-0 bg-card rounded-xl flex items-center justify-between px-6 z-10 select-none">
+            <div className="flex items-center gap-2.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
+              <span className="text-xs text-foreground font-bold">
+                Đang ghi âm thoại...
               </span>
             </div>
             {/* Visual soundwave simulations */}
-            <div className="flex items-center gap-1.5 h-6">
-              {[0.4, 0.9, 0.3, 0.8, 0.5, 0.9, 0.4].map((h, i) => (
-                <span
-                  key={i}
-                  style={{ height: `${h * 100}%` }}
-                  className="w-1 bg-primary rounded-full animate-pulse"
-                />
-              ))}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 h-5">
+                {[0.4, 0.9, 0.3, 0.8, 0.5, 0.9, 0.4].map((h, i) => (
+                  <span
+                    key={i}
+                    style={{ height: `${h * 100}%` }}
+                    className="w-0.75 bg-primary/75 rounded-full"
+                  />
+                ))}
+              </div>
+              <button
+                onClick={() => setVoiceRecordingState("idle")}
+                className="px-2.5 py-1 bg-secondary hover:bg-secondary/80 text-[10px] font-bold text-rose-500 rounded border border-border/80 cursor-pointer transition-all"
+              >
+                Hủy bỏ
+              </button>
             </div>
           </div>
         )}

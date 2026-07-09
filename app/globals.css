@@ -98,6 +98,7 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --font-display: var(--font-space-grotesk);
   
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -130,6 +131,11 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  letter-spacing: -0.02em;
 }
 
 /* Glassmorphism utility */

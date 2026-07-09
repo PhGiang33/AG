@@ -7,6 +7,7 @@ import { mockFetch, mockSystemStats, mockAuditLogs } from "@/lib/mock-data";
 import { StatCardSkeleton } from "@/components/skeletons";
 import { Compass, Sparkles, FolderOpen, AlertCircle, FileText, TrendingUp, CheckCircle, Clock } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { AreaChart, Area, ResponsiveContainer } from "recharts";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -98,81 +99,102 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-4">
         {loading ? (
-          <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCardSkeleton />
             <StatCardSkeleton />
             <StatCardSkeleton />
             <StatCardSkeleton />
-          </>
+          </div>
         ) : (
           stats && (
             <>
-              {/* Stat 1 */}
-              <div className="bg-card border border-border/80 rounded-xl p-5 shadow-premium-sm relative overflow-hidden group hover:border-primary/40 transition-colors">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-muted-foreground">Tổng chi phí LLM (tháng)</span>
-                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                    <TrendingUp className="h-5 w-5" />
+              {/* Row 1: Highlighted Main Metric (LLM Cost) */}
+              <div className="bg-card border border-border/80 rounded-xl p-6 shadow-premium-md flex flex-col md:flex-row justify-between items-center hover:border-primary/30 transition-all gap-6 relative overflow-hidden group">
+                <div className="space-y-2.5 flex-1 min-w-0">
+                  <div className="flex items-center justify-between md:justify-start gap-3">
+                    <span className="text-xs font-semibold text-muted-foreground font-display">Tổng chi phí LLM (tháng)</span>
+                    <TrendingUp className="h-5 w-5 text-muted-foreground stroke-1 shrink-0" />
+                  </div>
+                  <div className="pt-1">
+                    <h3 className="text-3xl lg:text-4xl font-extrabold font-display tracking-tight text-foreground">
+                      {formatCurrency(stats.totalCost)}
+                    </h3>
+                    <p className="text-[10px] text-emerald-500 font-bold mt-2 flex items-center gap-1">
+                      <span>+12.4%</span>
+                      <span className="text-muted-foreground font-normal">so với tháng trước</span>
+                    </p>
                   </div>
                 </div>
-                <div className="mt-4">
-                  <h3 className="text-xl font-bold tracking-tight">{formatCurrency(stats.totalCost)}</h3>
-                  <p className="text-[10px] text-emerald-500 font-bold mt-1.5 flex items-center gap-1">
-                    <span>+12.4%</span>
-                    <span className="text-muted-foreground font-normal">so với tháng trước</span>
-                  </p>
+
+                {/* Sparkline visualization */}
+                <div className="h-16 w-full md:w-56 text-xs select-none shrink-0">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={stats.costByDay} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="colorSparkline" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.15} />
+                          <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <Area
+                        type="monotone"
+                        dataKey="cost"
+                        stroke="var(--color-primary)"
+                        fillOpacity={1}
+                        fill="url(#colorSparkline)"
+                        strokeWidth={1.5}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
 
-              {/* Stat 2 */}
-              <div className="bg-card border border-border/80 rounded-xl p-5 shadow-premium-sm relative overflow-hidden group hover:border-primary/40 transition-colors">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-muted-foreground">Yêu cầu Agent xử lý</span>
-                  <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500">
-                    <Sparkles className="h-5 w-5" />
+              {/* Row 2: Secondary stats row */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Stat 2 */}
+                <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/20 transition-all">
+                  <div className="flex items-center justify-between select-none">
+                    <span className="text-xs font-semibold text-muted-foreground font-display">Yêu cầu Agent</span>
+                    <Sparkles className="h-4.5 w-4.5 text-muted-foreground stroke-1" />
+                  </div>
+                  <div className="mt-3">
+                    <h4 className="text-lg font-bold tracking-tight font-display">{stats.agentRequests.toLocaleString()} reqs</h4>
+                    <p className="text-[9px] text-emerald-500 font-bold mt-1.5 flex items-center gap-1">
+                      <span>+8.2%</span>
+                      <span className="text-muted-foreground font-normal">hôm nay</span>
+                    </p>
                   </div>
                 </div>
-                <div className="mt-4">
-                  <h3 className="text-xl font-bold tracking-tight">{stats.agentRequests.toLocaleString()}</h3>
-                  <p className="text-[10px] text-emerald-500 font-bold mt-1.5 flex items-center gap-1">
-                    <span>+8.2%</span>
-                    <span className="text-muted-foreground font-normal">hôm nay</span>
-                  </p>
-                </div>
-              </div>
 
-              {/* Stat 3 */}
-              <div className="bg-card border border-border/80 rounded-xl p-5 shadow-premium-sm relative overflow-hidden group hover:border-primary/40 transition-colors">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-muted-foreground">Tài liệu đã lập chỉ mục</span>
-                  <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
-                    <FolderOpen className="h-5 w-5" />
+                {/* Stat 3 */}
+                <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/20 transition-all">
+                  <div className="flex items-center justify-between select-none">
+                    <span className="text-xs font-semibold text-muted-foreground font-display">Đã chỉ mục hóa</span>
+                    <FolderOpen className="h-4.5 w-4.5 text-muted-foreground stroke-1" />
+                  </div>
+                  <div className="mt-3">
+                    <h4 className="text-lg font-bold tracking-tight font-display">8 tài liệu</h4>
+                    <p className="text-[9px] text-muted-foreground font-normal mt-1.5">
+                      Đồng bộ 2 giờ trước
+                    </p>
                   </div>
                 </div>
-                <div className="mt-4">
-                  <h3 className="text-xl font-bold tracking-tight">8 tài liệu</h3>
-                  <p className="text-[10px] text-muted-foreground font-normal mt-1.5">
-                    Quét tự động 2 giờ trước
-                  </p>
-                </div>
-              </div>
 
-              {/* Stat 4 */}
-              <div className="bg-card border border-border/80 rounded-xl p-5 shadow-premium-sm relative overflow-hidden group hover:border-primary/40 transition-colors">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-muted-foreground">Quy trình tự động hóa</span>
-                  <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
-                    <CheckCircle className="h-5 w-5" />
+                {/* Stat 4 */}
+                <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/20 transition-all">
+                  <div className="flex items-center justify-between select-none">
+                    <span className="text-xs font-semibold text-muted-foreground font-display">Luồng tự động</span>
+                    <CheckCircle className="h-4.5 w-4.5 text-muted-foreground stroke-1" />
                   </div>
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-xl font-bold tracking-tight">2/3 hoạt động</h3>
-                  <p className="text-[10px] text-rose-500 font-bold mt-1.5 flex items-center gap-1">
-                    <span>1 lỗi</span>
-                    <span className="text-muted-foreground font-normal">cần khắc phục</span>
-                  </p>
+                  <div className="mt-3">
+                    <h4 className="text-lg font-bold tracking-tight font-display">2/3 hoạt động</h4>
+                    <p className="text-[9px] text-rose-500 font-bold mt-1.5 flex items-center gap-1">
+                      <span>1 lỗi sync</span>
+                      <span className="text-muted-foreground font-normal">cần xử lý</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </>
