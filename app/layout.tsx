@@ -7,6 +7,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 
 // Khoi tao font Inter de dung cho toan bo cac van ban binh thuong (font-sans)
+const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "vietnamese"],
 });
@@ -28,6 +29,7 @@ export const metadata: Metadata = {
 };
 
 // Component RootLayout boc lay toan bo cac page ben trong no (bien children)
+export default function RootLayout({
   children,
   ...props
 }: Readonly<{
