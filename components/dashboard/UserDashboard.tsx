@@ -1,5 +1,8 @@
 "use client";
 
+// Day la Component chinh cua trang Tong Quan (Dashboard) cho User
+// Hien thi cac thong ke (Stats), lich lam viec (Tasks), va cac goi y dung AI (Suggestions).
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore, useChatStore } from "@/lib/store";
@@ -19,17 +22,17 @@ export default function UserDashboard() {
   const [tasks, setTasks] = useState<PersonalTask[]>([]);
   const [completedTaskIds, setCompletedTaskIds] = useState<string[]>([]);
 
-  // Dynamically map department based on role or mock it
+  // Phan bo ngau nhien Phong Ban (Department) theo Role cua user de hien thi
   const userDept = user.role === "Admin" ? "Ban Công nghệ Thông tin (IT)" : "Ban Kinh doanh (Sales)";
 
   useEffect(() => {
-    // 1. Greeting by time of day
+    // 1. Kiem tra gio hien tai de dua ra cau chao phu hop (Greeting)
     const hr = new Date().getHours();
     if (hr < 12) setGreeting("Chào buổi sáng");
     else if (hr < 18) setGreeting("Chào buổi chiều");
     else setGreeting("Chào buổi tối");
 
-    // 2. Fetch mock data
+    // 2. Fetch du lieu gia (mock data) de dien vao bieu do va danh sach cong viec
     const fetchData = async () => {
       setLoading(true);
       const statsData = await mockFetch(mockUserDashboardStats, 800);
@@ -42,11 +45,13 @@ export default function UserDashboard() {
     fetchData();
   }, []);
 
+  // Ham xu ly khi user bam vao 1 Goi y (Suggestion)
+  // Se tu dong tao 1 doan chat moi va dien san text vao o input cua trang Chat
   const handleSuggestionClick = (prompt: string, title: string, agentId?: string) => {
     const id = addConversation(title, agentId);
-    router.push(`/chat/${id}`);
+    router.push(`/chat/${id}`); // Chuyen trang
     
-    // prefill text input after route transition
+    // Dung setTimeout de doi component Chat render xong roi moi inject text vao textarea
     setTimeout(() => {
       const activeTextarea = document.querySelector("textarea");
       if (activeTextarea) {
@@ -55,21 +60,22 @@ export default function UserDashboard() {
           "value"
         )?.set;
         nativeSetter?.call(activeTextarea, prompt);
-        activeTextarea.dispatchEvent(new Event("input", { bubbles: true }));
+        activeTextarea.dispatchEvent(new Event("input", { bubbles: true })); // Kich hoat event React
       }
     }, 400);
   };
 
+  // Ham click de an/hien danh dau cong viec da hoan thanh
   const toggleTaskComplete = (taskId: string) => {
     setCompletedTaskIds((prev) =>
       prev.includes(taskId) ? prev.filter((id) => id !== taskId) : [...prev, taskId]
     );
   };
 
-  // Filter tasks that are not checked off yet
+  // Chi lay nhung viec chua duoc check hoan thanh (Filter active tasks)
   const activeTasks = tasks.filter((t) => !completedTaskIds.includes(t.id));
 
-  // Suggestion list with locked Agent ID mappings
+  // Danh sach tat ca cac Goi y Tac vu (Suggestions) cung ma Agent tuong ung
   const allSuggestions = [
     {
       title: "Phân tích doanh số Q1",
@@ -140,7 +146,7 @@ export default function UserDashboard() {
           <h1 className="text-xl font-bold tracking-tight text-foreground font-display">
             {greeting}, {user.name}!
           </h1>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Bạn đang hoạt động tại phòng ban: <span className="font-semibold text-primary">{userDept}</span>. Hôm nay là {formatDate(new Date())}.
           </p>
         </div>
@@ -163,19 +169,19 @@ export default function UserDashboard() {
                 {/* Primary Stat Card: AI Assistance Count */}
                 <div className="md:col-span-2 bg-card border border-border/80 rounded-xl p-5 shadow-premium-sm flex flex-col sm:flex-row justify-between items-center hover:border-primary/20 transition-all gap-4 overflow-hidden relative group">
                   <div className="space-y-2 flex-1 min-w-0">
-                    <span className="text-xs font-semibold text-muted-foreground font-display uppercase tracking-wider">Tác vụ AI hỗ trợ tôi tuần này</span>
+                    <span className="text-sm font-semibold text-muted-foreground font-display uppercase tracking-wider">Tác vụ AI hỗ trợ tôi tuần này</span>
                     <div className="pt-1">
                       <h3 className="text-3xl font-extrabold font-display tracking-tight text-foreground">
                         {personalStats.aiHelpedCount} lần
                       </h3>
-                      <p className="text-[10px] text-emerald-500 font-bold mt-2 flex items-center gap-1">
+                      <p className="text-xs text-emerald-500 font-bold mt-2 flex items-center gap-1">
                         <span>Đã tiết kiệm ~4.5 giờ làm việc</span>
                       </p>
                     </div>
                   </div>
 
                   {/* Sparkline chart */}
-                  <div className="h-14 w-full sm:w-44 text-xs select-none shrink-0">
+                  <div className="h-14 w-full sm:w-44 text-sm select-none shrink-0">
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={personalStats.aiHelpedByDay} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
                         <defs>
@@ -202,24 +208,24 @@ export default function UserDashboard() {
                   {/* Sub Stat 1: Documents */}
                   <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/20 transition-all">
                     <div className="flex items-center justify-between select-none">
-                      <span className="text-[11px] font-semibold text-muted-foreground font-display">Tài liệu đã đọc</span>
+                      <span className="text-xs font-semibold text-muted-foreground font-display">Tài liệu đã đọc</span>
                       <BookOpen className="h-4 w-4 text-muted-foreground stroke-1" />
                     </div>
                     <div className="mt-2.5">
                       <h4 className="text-base font-bold tracking-tight font-display">{personalStats.recentDocsCount} files</h4>
-                      <p className="text-[9px] text-muted-foreground mt-1">Truy cập tuần này</p>
+                      <p className="text-xs text-muted-foreground mt-1">Truy cập tuần này</p>
                     </div>
                   </div>
 
                   {/* Sub Stat 2: Active Workflows */}
                   <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/20 transition-all">
                     <div className="flex items-center justify-between select-none">
-                      <span className="text-[11px] font-semibold text-muted-foreground font-display">Quy trình tự động</span>
+                      <span className="text-xs font-semibold text-muted-foreground font-display">Quy trình tự động</span>
                       <Bot className="h-4 w-4 text-muted-foreground stroke-1" />
                     </div>
                     <div className="mt-2.5">
                       <h4 className="text-base font-bold tracking-tight font-display">{personalStats.runningWorkflowsCount} hoạt động</h4>
-                      <p className="text-[9px] text-emerald-500 font-bold mt-1">Đang đồng bộ ổn định</p>
+                      <p className="text-xs text-emerald-500 font-bold mt-1">Đang đồng bộ ổn định</p>
                     </div>
                   </div>
                 </div>
@@ -242,8 +248,8 @@ export default function UserDashboard() {
                         <ThumbsUp className="h-5 w-5" />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-xs font-bold text-foreground">Tuyệt vời! Bạn đã hoàn thành tất cả công việc!</h4>
-                        <p className="text-[10px] text-muted-foreground">Không còn tác vụ AI nào đang chờ xử lý hôm nay. 🎉</p>
+                        <h4 className="text-sm font-bold text-foreground">Tuyệt vời! Bạn đã hoàn thành tất cả công việc!</h4>
+                        <p className="text-xs text-muted-foreground">Không còn tác vụ AI nào đang chờ xử lý hôm nay. 🎉</p>
                       </div>
                     </div>
                   ) : (
@@ -261,13 +267,13 @@ export default function UserDashboard() {
                             >
                               <Square className="h-4.5 w-4.5 stroke-1" />
                             </button>
-                            <span className="text-xs font-medium text-foreground truncate max-w-sm select-text selection:bg-primary/20">
+                            <span className="text-sm font-medium text-foreground truncate max-w-sm select-text selection:bg-primary/20">
                               {t.title}
                             </span>
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0 select-none">
-                            <span className="text-[9px] font-bold bg-secondary border px-1.5 py-0.5 rounded text-muted-foreground uppercase leading-none font-mono">
+                            <span className="text-xs font-bold bg-secondary border px-1.5 py-0.5 rounded text-muted-foreground uppercase leading-none font-mono">
                               {t.dueTime}
                             </span>
                             <Link
@@ -300,15 +306,15 @@ export default function UserDashboard() {
                       className="w-full bg-card border border-border/80 hover:border-primary/45 p-3 rounded-xl text-left shadow-premium-sm hover:shadow-premium-md transition-all duration-250 flex flex-col justify-between cursor-pointer outline-none focus:ring-1 focus:ring-primary"
                     >
                       <div className="space-y-1">
-                        <span className="text-[8px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider font-mono">
+                        <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wider font-mono">
                           {s.tag}
                         </span>
-                        <h4 className="text-xs font-bold text-foreground">{s.title}</h4>
-                        <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">
+                        <h4 className="text-sm font-bold text-foreground">{s.title}</h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                           {s.desc}
                         </p>
                       </div>
-                      <div className="text-[10px] text-primary font-bold inline-flex items-center gap-1 mt-2.5">
+                      <div className="text-xs text-primary font-bold inline-flex items-center gap-1 mt-2.5">
                         <span>Trò chuyện ngay</span>
                         <span>→</span>
                       </div>

@@ -1,3 +1,6 @@
+// Hook lang nghe phim tat tu ban phim
+// Giup gan hanh dong vao cac to hop phim (VD: Ctrl+K).
+
 import { useEffect } from "react";
 
 type KeyCombo = {

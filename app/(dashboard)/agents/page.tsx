@@ -1,5 +1,9 @@
 "use client";
 
+// Trang danh sach Agent (AI Assistant)
+// Hien thi tat ca cac tro ly AI da duoc tich hop.
+
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore, useChatStore } from "@/lib/store";
@@ -96,7 +100,7 @@ export default function AgentCenterPage() {
         );
       case "odoo":
         return (
-          <div className="h-5 w-5 rounded bg-[#714B67] flex items-center justify-center text-white font-extrabold text-[8px] select-none shrink-0">
+          <div className="h-5 w-5 rounded bg-[#714B67] flex items-center justify-center text-white font-extrabold text-xs select-none shrink-0">
             odoo
           </div>
         );
@@ -130,7 +134,7 @@ export default function AgentCenterPage() {
             <Cpu className="h-6 w-6 text-primary" />
             <span>Trung tâm Agent (Agent Hub)</span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-1 select-none">
+          <p className="text-sm text-muted-foreground mt-1 select-none">
             Chọn một Agent chuyên biệt để thao tác trực tiếp với các nguồn dữ liệu công cụ doanh nghiệp của bạn.
           </p>
         </div>
@@ -144,7 +148,7 @@ export default function AgentCenterPage() {
               key={t.id}
               onClick={() => setSelectedFilter(t.id)}
               className={cn(
-                "px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all cursor-pointer",
+                "px-3 py-1.5 rounded-lg text-xs font-bold border transition-all cursor-pointer",
                 selectedFilter === t.id
                   ? "bg-primary text-primary-foreground border-primary shadow-premium-sm"
                   : "bg-card text-muted-foreground border-border/80 hover:bg-secondary/60 hover:text-foreground"
@@ -162,7 +166,7 @@ export default function AgentCenterPage() {
             onChange={(e) => setSearch(e.target.value)}
             type="text"
             placeholder="Tìm tên Agent, công cụ..."
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-card border border-border/80 rounded-lg outline-none focus:border-primary text-foreground placeholder-muted-foreground"
+            className="w-full pl-9 pr-3 py-1.5 text-sm bg-card border border-border/80 rounded-lg outline-none focus:border-primary text-foreground placeholder-muted-foreground"
           />
         </div>
       </div>
@@ -179,7 +183,7 @@ export default function AgentCenterPage() {
         <div className="py-16 text-center bg-card border border-dashed rounded-xl flex flex-col items-center select-none">
           <Cpu className="h-8 w-8 text-muted-foreground/30 mb-2" />
           <h3 className="text-sm font-bold text-foreground">Không tìm thấy Agent</h3>
-          <p className="text-xs text-muted-foreground mt-1">Vui lòng chọn bộ lọc khác hoặc nhập từ khóa tìm kiếm khác.</p>
+          <p className="text-sm text-muted-foreground mt-1">Vui lòng chọn bộ lọc khác hoặc nhập từ khóa tìm kiếm khác.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -204,17 +208,17 @@ export default function AgentCenterPage() {
                         {getProviderLogo(agent.toolProvider)}
                       </div>
                       <div className="min-w-0">
-                        <h4 className="text-xs font-bold text-foreground truncate group-hover:text-primary transition-colors cursor-pointer" onClick={() => handleAgentAction(agent)}>
+                        <h4 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors cursor-pointer" onClick={() => handleAgentAction(agent)}>
                           {agent.name}
                         </h4>
-                        <p className="text-[10px] text-muted-foreground truncate select-none">
+                        <p className="text-xs text-muted-foreground truncate select-none">
                           Công cụ: <span className="font-semibold text-foreground/80">{agent.tool}</span>
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-xs text-muted-foreground leading-relaxed min-h-[40px]">
+                  <p className="text-sm text-muted-foreground leading-relaxed min-h-[40px]">
                     {agent.description}
                   </p>
                 </div>
@@ -223,17 +227,17 @@ export default function AgentCenterPage() {
                   {/* Ledger Teal and Seal Red Badges */}
                   <div>
                     {isConnected && (
-                      <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full inline-flex items-center gap-0.5">
+                      <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full inline-flex items-center gap-0.5">
                         Connected
                       </span>
                     )}
                     {isDisconnected && (
-                      <span className="text-[9px] font-bold text-muted-foreground bg-secondary px-2 py-0.5 rounded-full inline-flex items-center gap-0.5">
+                      <span className="text-xs font-bold text-muted-foreground bg-secondary px-2 py-0.5 rounded-full inline-flex items-center gap-0.5">
                         Disconnected
                       </span>
                     )}
                     {isError && (
-                      <span className="text-[9px] font-bold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-full inline-flex items-center gap-0.5" title="Mất cấu hình kết nối OAuth">
+                      <span className="text-xs font-bold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-full inline-flex items-center gap-0.5" title="Mất cấu hình kết nối OAuth">
                         OAuth Error
                       </span>
                     )}
@@ -243,7 +247,7 @@ export default function AgentCenterPage() {
                     {isConnected ? (
                       <button
                         onClick={() => handleAgentAction(agent)}
-                        className="px-3 py-1.5 bg-primary text-primary-foreground text-[10px] font-bold rounded-lg hover:bg-primary/95 transition-all shadow-premium-sm inline-flex items-center gap-1 cursor-pointer"
+                        className="px-3 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-lg hover:bg-primary/95 transition-all shadow-premium-sm inline-flex items-center gap-1 cursor-pointer"
                       >
                         <span>Trò chuyện</span>
                         <ArrowRight className="h-3 w-3" />
@@ -252,7 +256,7 @@ export default function AgentCenterPage() {
                       <button
                         onClick={() => handleAgentAction(agent)}
                         className={cn(
-                          "px-2.5 py-1.5 text-[10px] font-bold rounded-lg border transition-all inline-flex items-center gap-1 cursor-pointer",
+                          "px-2.5 py-1.5 text-xs font-bold rounded-lg border transition-all inline-flex items-center gap-1 cursor-pointer",
                           isError
                             ? "bg-rose-500/15 border-rose-500/35 text-rose-500 hover:bg-rose-500/25"
                             : "bg-secondary border-border hover:bg-secondary/80 text-muted-foreground hover:text-foreground"

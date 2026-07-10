@@ -1,5 +1,8 @@
 "use client";
 
+// Provider boc ung dung de ho tro chuyen doi giao dien (Dark/Light mode).
+
+
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 

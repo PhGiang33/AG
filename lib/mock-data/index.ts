@@ -1,3 +1,6 @@
+// File chua du lieu gia (Mock Data) de mo phong cac tinh nang cua app
+// Bao gom list user, hoi thoai, bieu do, email, lich trinh...
+
 import { User, Conversation, ConnectedAccount, KnowledgeDoc, Workflow, PromptTemplate, AuditLog, SystemStat, CalendarEvent, AgentDefinition, EmailItem, ERPStockItem, CRMOpportunity, ThinkingStep } from "../types";
 
 export const mockUser: User = {
@@ -16,7 +19,7 @@ export const mockAccounts: ConnectedAccount[] = [
     name: "Google Workspace VinaCorp",
     email: "khang.nguyen@vinacorp.vn",
     status: "connected",
-    lastSync: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
+    lastSync: new Date(Date.now() - 1000 * 60 * 5), // cach day 5 phut
     permissions: ["Gmail", "Google Drive", "Calendar"]
   },
   {
@@ -25,7 +28,7 @@ export const mockAccounts: ConnectedAccount[] = [
     name: "Microsoft 365 Enterprise",
     email: "khang.n@vinacorp.onmicrosoft.com",
     status: "connected",
-    lastSync: new Date(Date.now() - 1000 * 60 * 12), // 12 minutes ago
+    lastSync: new Date(Date.now() - 1000 * 60 * 12), // cach day 12 phut
     permissions: ["SharePoint", "OneDrive", "Outlook"]
   },
   {
@@ -34,7 +37,7 @@ export const mockAccounts: ConnectedAccount[] = [
     name: "Hệ thống ERP Odoo VinaCorp",
     email: "khang.nguyen@erp.vinacorp.vn",
     status: "connected",
-    lastSync: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+    lastSync: new Date(Date.now() - 1000 * 60 * 60 * 2), // cach day 2 gio
     permissions: ["Sales", "Inventory", "HRMS"]
   },
   {
@@ -43,7 +46,7 @@ export const mockAccounts: ConnectedAccount[] = [
     name: "Salesforce CRM",
     email: "khang.nguyen@salesforce.vinacorp.vn",
     status: "error",
-    lastSync: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+    lastSync: new Date(Date.now() - 1000 * 60 * 60 * 24), // cach day 1 ngay
     permissions: ["Leads", "Accounts", "Opportunities"]
   },
   {
@@ -206,7 +209,7 @@ export const mockWorkflows: Workflow[] = [
     name: "Tự động hóa Đồng bộ và Kiểm tra Tài liệu Pháp lý mới",
     description: "Quét Google Drive/OneDrive, đồng bộ hợp đồng vào Knowledge Base, phân tích rủi ro pháp lý bằng AI và gửi cảnh báo về Teams/Slack.",
     status: "success",
-    lastRun: new Date(Date.now() - 1000 * 60 * 45), // 45 minutes ago
+    lastRun: new Date(Date.now() - 1000 * 60 * 45), // cach day 45 phut
     category: "Pháp lý",
     steps: [
       { id: "s1_1", name: "Quét thư mục Google Drive", description: "Quét thư mục /Hợp đồng/2026 để tìm file mới", status: "success", duration: "1.2s" },
@@ -228,7 +231,7 @@ export const mockWorkflows: Workflow[] = [
     name: "Đối chiếu Dữ liệu Bán hàng ERP Odoo và CRM Salesforce",
     description: "Lấy báo cáo doanh thu từ Odoo, đối chiếu với cơ hội bán hàng đã đóng trên Salesforce, tìm các sai lệch về chiết khấu và báo cáo cho kiểm toán.",
     status: "failed",
-    lastRun: new Date(Date.now() - 1000 * 60 * 60 * 3), // 3 hours ago
+    lastRun: new Date(Date.now() - 1000 * 60 * 60 * 3), // cach day 3 gio
     category: "Tài chính",
     steps: [
       { id: "s2_1", name: "Lấy dữ liệu Odoo", description: "Truy xuất hóa đơn bán hàng trong tháng từ Odoo API", status: "success", duration: "2.4s" },

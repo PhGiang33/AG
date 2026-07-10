@@ -98,6 +98,7 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --font-sans: var(--font-inter);
   --font-display: var(--font-space-grotesk);
   
   --radius-lg: var(--radius);

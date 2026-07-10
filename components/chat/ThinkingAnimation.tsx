@@ -1,5 +1,9 @@
 "use client";
 
+// Component Hieu ung AI dang suy nghi
+// Hien thi cac buoc dang xu ly cua AI (VD: Ket noi CSDL, Phan tich...).
+
+
 import { useEffect, useState } from "react";
 import { Loader2, Database, Sparkles, FileText, CheckCircle2, Link2, Calendar, Search, Mail, Loader } from "lucide-react";
 import { ThinkingStep } from "@/lib/types";
@@ -49,14 +53,14 @@ export function ThinkingAnimation({ steps: propsSteps }: ThinkingAnimationProps)
   return (
     <div className="flex gap-3 max-w-3xl mx-auto py-2">
       {/* Avatar */}
-      <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-violet-400 text-primary-foreground font-black text-xs flex items-center justify-center shrink-0 shadow-md">
+      <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-violet-400 text-primary-foreground font-black text-sm flex items-center justify-center shrink-0 shadow-md">
         AI
       </div>
 
       {/* Steps logs container */}
       <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex-1 space-y-2.5 max-w-[80%] select-none">
         <div className="flex items-center justify-between border-b border-border/60 pb-2 mb-1.5">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Trình tự phân tích của Agent</span>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Trình tự phân tích của Agent</span>
           <span className="h-2 w-2 rounded-full bg-primary animate-ping" />
         </div>
         
@@ -70,7 +74,7 @@ export function ThinkingAnimation({ steps: propsSteps }: ThinkingAnimationProps)
             return (
               <div
                 key={idx}
-                className={`flex items-center gap-2 text-xs transition-opacity duration-200 ${
+                className={`flex items-center gap-2 text-sm transition-opacity duration-200 ${
                   isPending ? "opacity-30" : "opacity-100"
                 }`}
               >

@@ -1,5 +1,8 @@
 "use client";
 
+// Day la component Hien thi cua so Chat (ChatWindow)
+// Day la noi dien ra toan bo tuong tac giua Nguoi dung va AI (Hien thi tin nhan, typing hieu ung, xu ly logic tra loi).
+
 import { useChatStore } from "@/lib/store";
 import { MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
@@ -25,18 +28,19 @@ export function ChatWindow() {
     addConversation
   } = useChatStore();
 
-  const [thinking, setThinking] = useState(false);
-  const [streamingText, setStreamingText] = useState("");
+  const [thinking, setThinking] = useState(false); // State hien thi hieu ung AI dang suy nghi
+  const [streamingText, setStreamingText] = useState(""); // State luu chuoi text dang duoc stream ra tu tu
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
   
-  const threadEndRef = useRef<HTMLDivElement>(null);
+  const threadEndRef = useRef<HTMLDivElement>(null); // Ref dung de cuon trang xuong duoi cung
   const [showDataSourcePanel, setShowDataSourcePanel] = useState(true);
 
+  // Lay thong tin doan chat hien tai va Agent dang duoc chon
   const activeConv = conversations.find((c) => c.id === activeConversationId);
   const activeAgent = activeConv?.agentId ? mockAgents.find((a) => a.id === activeConv.agentId) : null;
   const thinkingSteps = activeConv?.agentId ? agentThinkingSteps[activeConv.agentId] : undefined;
 
-  // Auto scroll to bottom
+  // Ham tu dong cuon man hinh xuong tin nhan moi nhat
   const scrollToBottom = () => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -45,7 +49,7 @@ export function ChatWindow() {
     scrollToBottom();
   }, [activeConv?.messages, thinking, streamingText]);
 
-  // Handle mock generation logic
+  // Ham mo phong (Simulate) logic sinh cau tra loi cua AI dua vao tin nhan cua nguoi dung
   const triggerSimulation = (userMsgId: string) => {
     const userMsg = activeConv?.messages.find((m) => m.id === userMsgId);
     if (!userMsg) return;
@@ -111,7 +115,7 @@ export function ChatWindow() {
       }
     }
 
-    // Delay thinking animations for 2.2s, then stream text
+    // Delay 2.2 giay de chay hieu ung 'AI dang suy nghi', sau do bat dau stream chu ra
     setTimeout(() => {
       setThinking(false);
       setStreamingMessageId("streaming");
@@ -143,10 +147,12 @@ export function ChatWindow() {
     }, 2200);
   };
 
+  // Xu ly su kien khi bam Enter de gui tin nhan
   const handleSend = (text: string) => {
     sendMessage(text, triggerSimulation);
   };
 
+  // Ham tao doan chat moi
   const handleCreateChat = () => {
     addConversation("Đoạn chat mới");
   };
@@ -156,18 +162,18 @@ export function ChatWindow() {
       {/* Upper header details */}
       <div className="px-5 py-3 border-b border-border/80 bg-card flex items-center justify-between">
         <div className="min-w-0">
-          <h2 className="text-xs font-bold text-foreground flex items-center gap-2 truncate select-none font-display">
+          <h2 className="text-sm font-bold text-foreground flex items-center gap-2 truncate select-none font-display">
             {activeAgent && (
               <Cpu className="h-4 w-4 text-primary shrink-0" />
             )}
             <span>{activeAgent ? activeAgent.name : (activeConv ? activeConv.title : "Tạo đoạn Chat mới")}</span>
             {activeAgent && (
-              <span className="text-[9px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full select-none border border-emerald-500/20 shrink-0">
+              <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full select-none border border-emerald-500/20 shrink-0">
                 {activeAgent.tool}
               </span>
             )}
           </h2>
-          <p className="text-[10px] text-muted-foreground truncate mt-0.5 select-none">
+          <p className="text-xs text-muted-foreground truncate mt-0.5 select-none">
             {activeConv && activeConv.messages.length > 0
               ? `${activeConv.messages.length} tin nhắn`
               : activeAgent
@@ -180,7 +186,7 @@ export function ChatWindow() {
           {activeConv?.agentId && (
             <button
               onClick={() => router.push("/agents")}
-              className="flex items-center gap-1.5 px-2.5 py-1 bg-secondary hover:bg-secondary/80 text-[10px] font-bold text-rose-500 rounded border border-border/80 cursor-pointer transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-secondary hover:bg-secondary/80 text-xs font-bold text-rose-500 rounded border border-border/80 cursor-pointer transition-all"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Thoát Agent</span>
@@ -212,15 +218,15 @@ export function ChatWindow() {
             {/* Simulated live streaming bubble */}
             {streamingMessageId === "streaming" && (
               <div className="flex gap-3 max-w-3xl mx-auto py-3">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-violet-400 text-primary-foreground font-black text-xs flex items-center justify-center shrink-0 shadow-md">
+                <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-violet-400 text-primary-foreground font-black text-sm flex items-center justify-center shrink-0 shadow-md">
                   AI
                 </div>
                 <div className="flex-1 min-w-0 max-w-[80%] flex flex-col items-start gap-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-muted-foreground/80">AI Assistant</span>
-                    <span className="text-[9px] text-muted-foreground/60">Gõ chữ...</span>
+                    <span className="text-xs font-bold text-muted-foreground/80">AI Assistant</span>
+                    <span className="text-xs text-muted-foreground/60">Gõ chữ...</span>
                   </div>
-                  <div className="rounded-xl px-4 py-3 border border-border/80 bg-card shadow-premium-sm text-xs text-foreground leading-relaxed rounded-tl-none mr-auto typing-cursor">
+                  <div className="rounded-xl px-4 py-3 border border-border/80 bg-card shadow-premium-sm text-sm text-foreground leading-relaxed rounded-tl-none mr-auto typing-cursor">
                     {/* Render live text with helper formatting replacement */}
                     <div dangerouslySetInnerHTML={{
                       __html: streamingText

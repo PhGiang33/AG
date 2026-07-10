@@ -1,5 +1,9 @@
 "use client";
 
+// Trang Lich su tro chuyen
+// Hien thi danh sach cac cuoc hoi thoai cu de nguoi dung xem lai.
+
+
 import { useChatStore } from "@/lib/store";
 import { formatRelativeTime } from "@/lib/utils";
 import { Search, MessageSquare, Pin, Trash2, Edit2, Check, X, ArrowRight, MoreHorizontal } from "lucide-react";
@@ -66,7 +70,7 @@ export default function ChatHistoryPage() {
             <MessageSquare className="h-6 w-6 text-primary" />
             <span>Lịch sử hội thoại (Chat History)</span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Quản lý các cuộc trò chuyện AI trước đây của bạn, đổi tên hoặc ghim các báo cáo quan trọng.
           </p>
         </div>
@@ -80,7 +84,7 @@ export default function ChatHistoryPage() {
           onChange={(e) => setSearch(e.target.value)}
           type="text"
           placeholder="Tìm kiếm tiêu đề hội thoại..."
-          className="w-full pl-10 pr-4 py-2 text-xs bg-card border border-border/80 rounded-lg outline-none focus:border-primary text-foreground placeholder-muted-foreground"
+          className="w-full pl-10 pr-4 py-2 text-sm bg-card border border-border/80 rounded-lg outline-none focus:border-primary text-foreground placeholder-muted-foreground"
         />
       </div>
 
@@ -90,14 +94,14 @@ export default function ChatHistoryPage() {
           <div className="py-16 text-center bg-card border border-dashed rounded-xl flex flex-col items-center">
             <MessageSquare className="h-8 w-8 text-muted-foreground/50 mb-2" />
             <h3 className="text-sm font-bold text-foreground">Chưa có lịch sử</h3>
-            <p className="text-xs text-muted-foreground mt-1">Các cuộc trò chuyện mới của bạn sẽ được lưu giữ tại đây.</p>
+            <p className="text-sm text-muted-foreground mt-1">Các cuộc trò chuyện mới của bạn sẽ được lưu giữ tại đây.</p>
           </div>
         ) : (
           <>
             {/* 1. Today group */}
             {today.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-[10px] font-bold text-primary uppercase tracking-wider select-none">Hôm nay</h3>
+                <h3 className="text-xs font-bold text-primary uppercase tracking-wider select-none">Hôm nay</h3>
                 <div className="bg-card border border-border/80 rounded-xl divide-y divide-border/60 overflow-hidden shadow-premium-sm">
                   {today.map((c) => (
                     <div key={c.id} className="p-3 flex items-center justify-between hover:bg-secondary/20 transition-colors group">
@@ -108,7 +112,7 @@ export default function ChatHistoryPage() {
                             <input
                               value={editingTitle}
                               onChange={(e) => setEditingTitle(e.target.value)}
-                              className="px-2 py-0.5 border border-primary rounded text-xs bg-background text-foreground outline-none w-full max-w-sm"
+                              className="px-2 py-0.5 border border-primary rounded text-sm bg-background text-foreground outline-none w-full max-w-sm"
                               autoFocus
                             />
                             <button onClick={() => handleSaveRename(c.id)} className="p-1 text-emerald-500 hover:bg-secondary rounded cursor-pointer">
@@ -121,7 +125,7 @@ export default function ChatHistoryPage() {
                         ) : (
                           <button
                             onClick={() => router.push(`/chat/${c.id}`)}
-                            className="text-xs font-semibold hover:text-primary transition-colors truncate text-left cursor-pointer"
+                            className="text-sm font-semibold hover:text-primary transition-colors truncate text-left cursor-pointer"
                           >
                             {c.title}
                           </button>
@@ -130,7 +134,7 @@ export default function ChatHistoryPage() {
                       </div>
 
                       <div className="flex items-center gap-3 select-none">
-                        <span className="text-[10px] text-muted-foreground shrink-0">{formatRelativeTime(c.updatedAt)}</span>
+                        <span className="text-xs text-muted-foreground shrink-0">{formatRelativeTime(c.updatedAt)}</span>
                         {editingId !== c.id && (
                           <DropdownMenu.Root>
                             <DropdownMenu.Trigger asChild>
@@ -140,15 +144,15 @@ export default function ChatHistoryPage() {
                             </DropdownMenu.Trigger>
                             <DropdownMenu.Portal>
                               <DropdownMenu.Content align="end" className="bg-card border border-border rounded-lg p-1 shadow-premium-md z-30 outline-none w-32">
-                                <DropdownMenu.Item onClick={() => pinConversation(c.id)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-xs hover:bg-secondary outline-none cursor-pointer">
+                                <DropdownMenu.Item onClick={() => pinConversation(c.id)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-sm hover:bg-secondary outline-none cursor-pointer">
                                   <Pin className="h-3.5 w-3.5" />
                                   <span>{c.isPinned ? "Bỏ ghim" : "Ghim đầu"}</span>
                                 </DropdownMenu.Item>
-                                <DropdownMenu.Item onClick={() => handleStartRename(c.id, c.title)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-xs hover:bg-secondary outline-none cursor-pointer">
+                                <DropdownMenu.Item onClick={() => handleStartRename(c.id, c.title)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-sm hover:bg-secondary outline-none cursor-pointer">
                                   <Edit2 className="h-3.5 w-3.5" />
                                   <span>Đổi tên</span>
                                 </DropdownMenu.Item>
-                                <DropdownMenu.Item onClick={() => setDeleteConfirmId(c.id)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-xs text-rose-500 hover:bg-rose-50/10 outline-none cursor-pointer">
+                                <DropdownMenu.Item onClick={() => setDeleteConfirmId(c.id)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-sm text-rose-500 hover:bg-rose-50/10 outline-none cursor-pointer">
                                   <Trash2 className="h-3.5 w-3.5" />
                                   <span>Xóa bỏ</span>
                                 </DropdownMenu.Item>
@@ -166,7 +170,7 @@ export default function ChatHistoryPage() {
             {/* 2. 7 Days group */}
             {week.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider select-none">7 ngày trước</h3>
+                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider select-none">7 ngày trước</h3>
                 <div className="bg-card border border-border/80 rounded-xl divide-y divide-border/60 overflow-hidden shadow-premium-sm">
                   {week.map((c) => (
                     <div key={c.id} className="p-3 flex items-center justify-between hover:bg-secondary/20 transition-colors group">
@@ -177,7 +181,7 @@ export default function ChatHistoryPage() {
                             <input
                               value={editingTitle}
                               onChange={(e) => setEditingTitle(e.target.value)}
-                              className="px-2 py-0.5 border border-primary rounded text-xs bg-background text-foreground outline-none w-full max-w-sm"
+                              className="px-2 py-0.5 border border-primary rounded text-sm bg-background text-foreground outline-none w-full max-w-sm"
                               autoFocus
                             />
                             <button onClick={() => handleSaveRename(c.id)} className="p-1 text-emerald-500 hover:bg-secondary rounded cursor-pointer">
@@ -190,7 +194,7 @@ export default function ChatHistoryPage() {
                         ) : (
                           <button
                             onClick={() => router.push(`/chat/${c.id}`)}
-                            className="text-xs font-semibold hover:text-primary transition-colors truncate text-left cursor-pointer"
+                            className="text-sm font-semibold hover:text-primary transition-colors truncate text-left cursor-pointer"
                           >
                             {c.title}
                           </button>
@@ -199,7 +203,7 @@ export default function ChatHistoryPage() {
                       </div>
 
                       <div className="flex items-center gap-3 select-none">
-                        <span className="text-[10px] text-muted-foreground shrink-0">{formatRelativeTime(c.updatedAt)}</span>
+                        <span className="text-xs text-muted-foreground shrink-0">{formatRelativeTime(c.updatedAt)}</span>
                         {editingId !== c.id && (
                           <DropdownMenu.Root>
                             <DropdownMenu.Trigger asChild>
@@ -209,15 +213,15 @@ export default function ChatHistoryPage() {
                             </DropdownMenu.Trigger>
                             <DropdownMenu.Portal>
                               <DropdownMenu.Content align="end" className="bg-card border border-border rounded-lg p-1 shadow-premium-md z-30 outline-none w-32">
-                                <DropdownMenu.Item onClick={() => pinConversation(c.id)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-xs hover:bg-secondary outline-none cursor-pointer">
+                                <DropdownMenu.Item onClick={() => pinConversation(c.id)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-sm hover:bg-secondary outline-none cursor-pointer">
                                   <Pin className="h-3.5 w-3.5" />
                                   <span>{c.isPinned ? "Bỏ ghim" : "Ghim đầu"}</span>
                                 </DropdownMenu.Item>
-                                <DropdownMenu.Item onClick={() => handleStartRename(c.id, c.title)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-xs hover:bg-secondary outline-none cursor-pointer">
+                                <DropdownMenu.Item onClick={() => handleStartRename(c.id, c.title)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-sm hover:bg-secondary outline-none cursor-pointer">
                                   <Edit2 className="h-3.5 w-3.5" />
                                   <span>Đổi tên</span>
                                 </DropdownMenu.Item>
-                                <DropdownMenu.Item onClick={() => setDeleteConfirmId(c.id)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-xs text-rose-500 hover:bg-rose-50/10 outline-none cursor-pointer">
+                                <DropdownMenu.Item onClick={() => setDeleteConfirmId(c.id)} className="flex items-center gap-2 px-2.5 py-1.5 rounded text-sm text-rose-500 hover:bg-rose-50/10 outline-none cursor-pointer">
                                   <Trash2 className="h-3.5 w-3.5" />
                                   <span>Xóa bỏ</span>
                                 </DropdownMenu.Item>
@@ -240,20 +244,20 @@ export default function ChatHistoryPage() {
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 animate-fade-in" />
           <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xs bg-card border border-border shadow-premium-lg rounded-xl p-5 outline-none z-50 animate-zoom-in">
-            <Dialog.Title className="text-xs font-bold text-foreground">Xóa lịch sử trò chuyện này?</Dialog.Title>
-            <p className="text-[11px] text-muted-foreground mt-2">
+            <Dialog.Title className="text-sm font-bold text-foreground">Xóa lịch sử trò chuyện này?</Dialog.Title>
+            <p className="text-xs text-muted-foreground mt-2">
               Hành động này sẽ xóa vĩnh viễn nội dung cuộc đối thoại này khỏi lịch sử của bạn. Không thể hoàn tác.
             </p>
             <div className="flex justify-end gap-2 mt-4 pt-2">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-secondary text-[10px] font-bold cursor-pointer"
+                className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-secondary text-xs font-bold cursor-pointer"
               >
                 Hủy bỏ
               </button>
               <button
                 onClick={() => handleDeleteConfirm(deleteConfirmId!)}
-                className="px-2.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-bold shadow-premium-sm cursor-pointer"
+                className="px-2.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold shadow-premium-sm cursor-pointer"
               >
                 Xác nhận xóa
               </button>

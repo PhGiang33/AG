@@ -1,5 +1,9 @@
 "use client";
 
+// Component Dashboard danh rieng cho Admin
+// Chua cac bieu do va thong ke bao quat toan he thong.
+
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { mockFetch, mockSystemStats, mockAuditLogs, mockSystemAlerts, mockDepartmentUsage, SystemAlert } from "@/lib/mock-data";
@@ -57,7 +61,7 @@ export default function AdminDashboard() {
             <Server className="h-5.5 w-5.5 text-primary" />
             <span>Bảng vận hành hệ thống (Admin Dashboard)</span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-1 select-none">
+          <p className="text-sm text-muted-foreground mt-1 select-none">
             Giám sát hiệu năng, quản lý chi phí tài nguyên LLM và quản trị bảo mật hệ thống.
           </p>
         </div>
@@ -66,7 +70,7 @@ export default function AdminDashboard() {
       {/* Alert Banner for System issues */}
       {!loading && alerts.length > 0 && (
         <div className="space-y-3">
-          <div className="flex items-center gap-1.5 text-rose-500 font-bold text-xs select-none">
+          <div className="flex items-center gap-1.5 text-rose-500 font-bold text-sm select-none">
             <ShieldAlert className="h-4.5 w-4.5" />
             <span>CẢNH BÁO HỆ THỐNG CẦN XỬ LÝ</span>
           </div>
@@ -79,13 +83,13 @@ export default function AdminDashboard() {
                 <div className="space-y-1 select-none">
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
-                    <h4 className="text-xs font-bold text-foreground">{al.title}</h4>
+                    <h4 className="text-sm font-bold text-foreground">{al.title}</h4>
                   </div>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">{al.desc}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{al.desc}</p>
                 </div>
                 <button
                   onClick={() => handleResolveAlert(al.actionHash)}
-                  className="px-2.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-bold rounded cursor-pointer transition-colors shrink-0"
+                  className="px-2.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded cursor-pointer transition-colors shrink-0"
                 >
                   {al.actionLabel}
                 </button>
@@ -118,14 +122,14 @@ export default function AdminDashboard() {
               <div className="bg-card border border-border/80 rounded-xl p-5.5 shadow-premium-md flex flex-col md:flex-row justify-between items-center hover:border-primary/30 transition-all gap-6 relative overflow-hidden group">
                 <div className="space-y-2.5 flex-1 min-w-0">
                   <div className="flex items-center justify-between md:justify-start gap-3">
-                    <span className="text-xs font-semibold text-muted-foreground font-display uppercase tracking-wider">Tổng chi phí LLM toàn công ty (Tháng)</span>
+                    <span className="text-sm font-semibold text-muted-foreground font-display uppercase tracking-wider">Tổng chi phí LLM toàn công ty (Tháng)</span>
                     <TrendingUp className="h-5 w-5 text-muted-foreground stroke-1 shrink-0" />
                   </div>
                   <div className="pt-1">
                     <h3 className="text-3xl lg:text-4xl font-extrabold font-display tracking-tight text-foreground">
                       {formatCurrency(stats.totalCost)}
                     </h3>
-                    <p className="text-[10px] text-emerald-500 font-bold mt-2 flex items-center gap-1">
+                    <p className="text-xs text-emerald-500 font-bold mt-2 flex items-center gap-1">
                       <span>+12.4%</span>
                       <span className="text-muted-foreground font-normal">so với tháng trước</span>
                     </p>
@@ -133,7 +137,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Sparkline */}
-                <div className="h-16 w-full md:w-56 text-xs select-none shrink-0">
+                <div className="h-16 w-full md:w-56 text-sm select-none shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={stats.costByDay} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                       <defs>
@@ -159,12 +163,12 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/20 transition-all">
                   <div className="flex items-center justify-between select-none">
-                    <span className="text-xs font-semibold text-muted-foreground font-display">Tổng yêu cầu Agent</span>
+                    <span className="text-sm font-semibold text-muted-foreground font-display">Tổng yêu cầu Agent</span>
                     <Sparkles className="h-4.5 w-4.5 text-muted-foreground stroke-1" />
                   </div>
                   <div className="mt-3">
-                    <h4 className="text-lg font-bold tracking-tight font-display">{stats.agentRequests.toLocaleString()} reqs</h4>
-                    <p className="text-[9px] text-emerald-500 font-bold mt-1.5 flex items-center gap-1">
+                    <h4 className="text-base font-bold tracking-tight font-display">{stats.agentRequests.toLocaleString()} reqs</h4>
+                    <p className="text-xs text-emerald-500 font-bold mt-1.5 flex items-center gap-1">
                       <span>+8.2%</span>
                       <span className="text-muted-foreground font-normal">hôm nay</span>
                     </p>
@@ -173,12 +177,12 @@ export default function AdminDashboard() {
 
                 <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/20 transition-all">
                   <div className="flex items-center justify-between select-none">
-                    <span className="text-xs font-semibold text-muted-foreground font-display">Tài liệu đã chỉ mục</span>
+                    <span className="text-sm font-semibold text-muted-foreground font-display">Tài liệu đã chỉ mục</span>
                     <FolderOpen className="h-4.5 w-4.5 text-muted-foreground stroke-1" />
                   </div>
                   <div className="mt-3">
-                    <h4 className="text-lg font-bold tracking-tight font-display">10 tài liệu</h4>
-                    <p className="text-[9px] text-muted-foreground font-normal mt-1.5">
+                    <h4 className="text-base font-bold tracking-tight font-display">10 tài liệu</h4>
+                    <p className="text-xs text-muted-foreground font-normal mt-1.5">
                       Từ Google Drive, ERP, CRM
                     </p>
                   </div>
@@ -186,12 +190,12 @@ export default function AdminDashboard() {
 
                 <div className="bg-card border border-border/80 rounded-xl p-4 shadow-premium-sm flex flex-col justify-between hover:border-primary/20 transition-all">
                   <div className="flex items-center justify-between select-none">
-                    <span className="text-xs font-semibold text-muted-foreground font-display">Luồng tự động chạy</span>
+                    <span className="text-sm font-semibold text-muted-foreground font-display">Luồng tự động chạy</span>
                     <CheckCircle className="h-4.5 w-4.5 text-muted-foreground stroke-1" />
                   </div>
                   <div className="mt-3">
-                    <h4 className="text-lg font-bold tracking-tight font-display">2/3 hoạt động</h4>
-                    <p className="text-[9px] text-rose-500 font-bold mt-1.5 flex items-center gap-1">
+                    <h4 className="text-base font-bold tracking-tight font-display">2/3 hoạt động</h4>
+                    <p className="text-xs text-rose-500 font-bold mt-1.5 flex items-center gap-1">
                       <span>1 lỗi connector</span>
                       <span className="text-muted-foreground font-normal">cần kết nối lại</span>
                     </p>
@@ -205,10 +209,10 @@ export default function AdminDashboard() {
               {/* Department breakdown chart (2 cols) */}
               <div className="lg:col-span-2 bg-card border border-border/80 rounded-xl p-5 shadow-premium-sm space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-foreground font-display uppercase tracking-wider">Chi phí & Lượt yêu cầu theo Phòng ban</h3>
-                  <span className="text-[10px] text-muted-foreground">Odoo/Salesforce Sync</span>
+                  <h3 className="text-sm font-bold text-foreground font-display uppercase tracking-wider">Chi phí & Lượt yêu cầu theo Phòng ban</h3>
+                  <span className="text-xs text-muted-foreground">Odoo/Salesforce Sync</span>
                 </div>
-                <div className="h-56 text-xs select-none">
+                <div className="h-56 text-sm select-none">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={mockDepartmentUsage} margin={{ top: 10, right: 10, left: 10, bottom: 5 }}>
                       <XAxis dataKey="name" stroke="var(--color-muted-foreground)" fontSize={10} tickLine={false} />
@@ -229,12 +233,12 @@ export default function AdminDashboard() {
               <div className="bg-card border border-border/80 rounded-xl p-5 shadow-premium-sm space-y-4 flex flex-col justify-between">
                 <div className="space-y-3.5">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-bold text-foreground font-display uppercase tracking-wider">Audit Log hệ thống</h3>
+                    <h3 className="text-sm font-bold text-foreground font-display uppercase tracking-wider">Audit Log hệ thống</h3>
                     
                     <select
                       value={deptFilter}
                       onChange={(e) => setDeptFilter(e.target.value)}
-                      className="text-[9px] bg-secondary border border-border rounded px-1.5 py-0.5 outline-none font-bold text-foreground/80 cursor-pointer"
+                      className="text-xs bg-secondary border border-border rounded px-1.5 py-0.5 outline-none font-bold text-foreground/80 cursor-pointer"
                     >
                       <option value="All">Tất cả ban</option>
                       <option value="IT">Ban CNTT</option>
@@ -245,17 +249,17 @@ export default function AdminDashboard() {
 
                   <div className="space-y-4 max-h-[190px] overflow-y-auto scrollbar">
                     {filteredActivities.length === 0 ? (
-                      <p className="text-[10px] text-muted-foreground text-center py-8">Không có bản ghi nào.</p>
+                      <p className="text-xs text-muted-foreground text-center py-8">Không có bản ghi nào.</p>
                     ) : (
                       filteredActivities.map((log) => (
-                        <div key={log.id} className="flex items-start gap-2.5 text-xs">
+                        <div key={log.id} className="flex items-start gap-2.5 text-sm">
                           <div className="h-6 w-6 rounded-full bg-secondary flex items-center justify-center shrink-0 text-muted-foreground">
                             <FileText className="h-3 w-3" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="font-bold text-foreground truncate">{log.user}</p>
-                            <p className="text-[10px] text-muted-foreground truncate">{log.action}: {log.target}</p>
-                            <span className="text-[8px] text-muted-foreground/60 block font-mono mt-0.5">
+                            <p className="text-xs text-muted-foreground truncate">{log.action}: {log.target}</p>
+                            <span className="text-xs text-muted-foreground/60 block font-mono mt-0.5">
                               {new Date(log.timestamp).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })} - IP: {log.ipAddress}
                             </span>
                           </div>
@@ -269,7 +273,7 @@ export default function AdminDashboard() {
                 <div className="pt-3.5 border-t border-border/50">
                   <Link 
                     href="/settings"
-                    className="w-full py-1.5 bg-secondary hover:bg-secondary/80 text-[10px] font-bold text-foreground rounded border border-border/80 flex items-center justify-center gap-1 transition-all"
+                    className="w-full py-1.5 bg-secondary hover:bg-secondary/80 text-xs font-bold text-foreground rounded border border-border/80 flex items-center justify-center gap-1 transition-all"
                   >
                     <span>Xem cấu hình hệ thống</span>
                     <ArrowRight className="h-3 w-3" />

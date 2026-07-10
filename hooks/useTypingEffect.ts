@@ -1,3 +1,6 @@
+// Hook tao hieu ung go chu giong nhu nguoi that (Typing effect)
+// Su dung khi AI phan hoi de tao cam giac sinh dong.
+
 import { useState, useEffect, useRef } from "react";
 
 export const useTypingEffect = (

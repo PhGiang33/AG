@@ -1,3 +1,6 @@
+// Cac component trang thai rong (Empty States)
+// Hien thi khi khong co du lieu (VD: Chua co tin nhan, khong co tai lieu).
+
 import { MessageSquare, FolderOpen, History, Terminal, Plus, Search } from "lucide-react";
 
 interface EmptyStateProps {
@@ -63,10 +66,10 @@ export function EmptyChatState({ onAction, agentId }: { onAction: (prompt: strin
           <button
             key={i}
             onClick={() => onAction(suggestion)}
-            className="p-3.5 text-left text-xs text-muted-foreground hover:text-foreground bg-card hover:bg-secondary/40 border border-border/80 hover:border-primary/45 rounded-xl shadow-premium-sm transition-all duration-200 outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 group cursor-pointer"
+            className="p-3.5 text-left text-sm text-muted-foreground hover:text-foreground bg-card hover:bg-secondary/40 border border-border/80 hover:border-primary/45 rounded-xl shadow-premium-sm transition-all duration-200 outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 group cursor-pointer"
           >
             <p className="font-semibold line-clamp-2">{suggestion}</p>
-            <span className="text-[10px] text-primary/80 group-hover:text-primary font-medium mt-1.5 inline-flex items-center gap-1">
+            <span className="text-xs text-primary/80 group-hover:text-primary font-medium mt-1.5 inline-flex items-center gap-1">
               Sử dụng Prompt →
             </span>
           </button>
@@ -84,13 +87,13 @@ export function EmptyKnowledgeState({ onAction, actionLabel }: EmptyStateProps) 
         <FolderOpen className="h-6 w-6" />
       </div>
       <h3 className="text-sm font-bold text-foreground">Thư mục trống</h3>
-      <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+      <p className="text-sm text-muted-foreground mt-1 max-w-xs">
         Chưa có tài liệu tri thức nào được tải lên thư mục này. Hãy tải lên các tệp PDF, Excel, Word hoặc liên kết từ Drive.
       </p>
       {onAction && actionLabel && (
         <button
           onClick={onAction}
-          className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-premium-sm cursor-pointer"
+          className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all shadow-premium-sm cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           <span>{actionLabel}</span>
@@ -107,13 +110,13 @@ export function EmptyHistoryState({ onAction }: { onAction: () => void }) {
       <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center text-muted-foreground mb-3">
         <History className="h-5 w-5" />
       </div>
-      <h4 className="text-xs font-bold text-foreground">Không tìm thấy hội thoại</h4>
-      <p className="text-[11px] text-muted-foreground mt-1 max-w-[200px]">
+      <h4 className="text-sm font-bold text-foreground">Không tìm thấy hội thoại</h4>
+      <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">
         Bạn chưa tạo cuộc trò chuyện nào hoặc không tìm thấy hội thoại phù hợp.
       </p>
       <button
         onClick={onAction}
-        className="mt-3.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-all cursor-pointer"
+        className="mt-3.5 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-all cursor-pointer"
       >
         <Plus className="h-3.5 w-3.5" />
         <span>Bắt đầu cuộc chat mới</span>
@@ -130,13 +133,13 @@ export function EmptyWorkflowState({ onAction, actionLabel }: EmptyStateProps) {
         <Terminal className="h-6 w-6" />
       </div>
       <h3 className="text-sm font-bold text-foreground">Chưa có luồng công việc</h3>
-      <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+      <p className="text-sm text-muted-foreground mt-1 max-w-xs">
         Bắt đầu xây dựng quy trình tự động hóa bằng cách tạo mới các bước kết nối giữa các nền tảng Odoo, Salesforce và Google Workspace.
       </p>
       {onAction && actionLabel && (
         <button
           onClick={onAction}
-          className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-premium-sm cursor-pointer"
+          className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all shadow-premium-sm cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           <span>{actionLabel}</span>

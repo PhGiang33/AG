@@ -1,3 +1,6 @@
+// Cac component Hieu ung cho (Skeleton Loading)
+// Hien thi khung mau xam trong luc dang tai du lieu tu server.
+
 import { cn } from "@/lib/utils";
 
 // 1. Stat Card Loading Skeleton

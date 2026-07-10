@@ -1,5 +1,8 @@
 "use client";
 
+// Component Nut bam chuyen doi giao dien Sang/Toi.
+
+
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";

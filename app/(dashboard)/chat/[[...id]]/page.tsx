@@ -1,5 +1,8 @@
 "use client";
 
+// Day la Trang Chat Chinh cua he thong
+// No ho tro routing dong kieu Catch-all (VD: /chat, /chat/123, /chat/abc)
+
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useChatStore } from "@/lib/store";
@@ -9,18 +12,20 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ChatPage() {
-  const params = useParams();
+  const params = useParams(); // Lay tham so URL (id cua cuoc tro chuyen)
   const { setActiveConversationId, activeConversationId } = useChatStore();
-  const [sourcesOpen, setSourcesOpen] = useState(true);
+  const [sourcesOpen, setSourcesOpen] = useState(true); // State an/hien cot chon Data Source
 
-  // Sync active route ID parameter with Zustand
+  // Hook useEffect: Dong bo ID tren URL voi Global State cua Zustand
   useEffect(() => {
+    // Next.js Catch-all route tra ve array, ta lay phan tu dau tien lam ID
     const id = params?.id
       ? Array.isArray(params.id)
         ? params.id[0]
         : params.id
       : null;
     
+    // Neu co ID thi cap nhat lai activeConversationId
     if (id) {
       setActiveConversationId(id);
     }

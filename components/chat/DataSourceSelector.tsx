@@ -1,5 +1,9 @@
 "use client";
 
+// Component chon nguon du lieu (Data Source)
+// Cho phep nguoi dung tick chon cac tai lieu hoac folder de AI tham khao.
+
+
 import { useChatStore } from "@/lib/store";
 import { mockKnowledgeDocs, mockAgents } from "@/lib/mock-data";
 import { Folder, FileText, Check, ChevronDown, ChevronRight, Lock, Cpu } from "lucide-react";
@@ -44,8 +48,8 @@ export function DataSourceSelector() {
       <div className="p-3 border-b border-border flex items-center justify-between bg-secondary/30">
         <div className="flex items-center gap-1.5">
           <Folder className="h-4 w-4 text-primary" />
-          <span className="text-xs font-bold text-foreground">Nguồn dữ liệu AI</span>
-          <span className="text-[10px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
+          <span className="text-sm font-bold text-foreground">Nguồn dữ liệu AI</span>
+          <span className="text-xs font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
             {activeAgent ? 1 : selectedSources.length}
           </span>
         </div>
@@ -53,14 +57,14 @@ export function DataSourceSelector() {
           <div className="flex gap-2">
             <button
               onClick={handleSelectAll}
-              className="text-[10px] text-muted-foreground hover:text-primary font-bold hover:underline cursor-pointer"
+              className="text-xs text-muted-foreground hover:text-primary font-bold hover:underline cursor-pointer"
             >
               Tất cả
             </button>
-            <span className="text-muted-foreground/30 text-xs">|</span>
+            <span className="text-muted-foreground/30 text-sm">|</span>
             <button
               onClick={clearSources}
-              className="text-[10px] text-muted-foreground hover:text-rose-500 font-bold hover:underline cursor-pointer"
+              className="text-xs text-muted-foreground hover:text-rose-500 font-bold hover:underline cursor-pointer"
             >
               Bỏ chọn
             </button>
@@ -68,16 +72,16 @@ export function DataSourceSelector() {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 scrollbar text-xs">
+      <div className="flex-1 overflow-y-auto p-3.5 space-y-3.5 scrollbar text-sm">
         {activeAgent ? (
           // Locked source display
           <div className="space-y-4 pt-1">
-            <div className="p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center gap-2.5 text-xs text-primary font-bold">
+            <div className="p-3 bg-primary/5 border border-primary/20 rounded-xl flex items-center gap-2.5 text-sm text-primary font-bold">
               <Lock className="h-4 w-4 shrink-0 text-primary animate-pulse" />
               <span>Đang làm việc với: {activeAgent.lockedDataSource}</span>
             </div>
             
-            <div className="text-[11px] text-muted-foreground leading-relaxed p-2 bg-secondary/20 rounded-lg border border-border/40">
+            <div className="text-xs text-muted-foreground leading-relaxed p-2 bg-secondary/20 rounded-lg border border-border/40">
               Chế độ trò chuyện chuyên biệt với **{activeAgent.name}**. Nguồn dữ liệu đã được cấu hình cố định nhằm tránh sai lệch thông tin.
             </div>
 
@@ -142,7 +146,7 @@ export function DataSourceSelector() {
                               <div className="h-3.5 w-3.5 rounded border border-border bg-card group-hover:border-primary/50 transition-colors shrink-0" />
                             )}
                             <FileText className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary shrink-0" />
-                            <span className="truncate text-[11px]">{doc.title}</span>
+                            <span className="truncate text-xs">{doc.title}</span>
                           </div>
                         </button>
                       );

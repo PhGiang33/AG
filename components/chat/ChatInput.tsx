@@ -1,5 +1,9 @@
 "use client";
 
+// Component O nhap tin nhan (Chat Input)
+// Chua textarea cho nguoi dung go cau hoi va nut Gui.
+
+
 import { useChatStore } from "@/lib/store";
 import { Mic, Paperclip, Send, X, Square, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
@@ -94,7 +98,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
           {attachedFiles.map((file, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-secondary/80 border border-border text-[10px] text-foreground font-semibold shadow-sm animate-in fade-in"
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-secondary/80 border border-border text-xs text-foreground font-semibold shadow-sm animate-in fade-in"
             >
               <Paperclip className="h-3 w-3 text-primary shrink-0" />
               <span className="truncate max-w-[120px]">{file.name}</span>
@@ -125,7 +129,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
           <div className="absolute inset-0 bg-card rounded-xl flex items-center justify-between px-6 z-10 select-none">
             <div className="flex items-center gap-2.5">
               <span className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
-              <span className="text-xs text-foreground font-bold">
+              <span className="text-sm text-foreground font-bold">
                 Đang ghi âm thoại...
               </span>
             </div>
@@ -142,7 +146,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
               </div>
               <button
                 onClick={() => setVoiceRecordingState("idle")}
-                className="px-2.5 py-1 bg-secondary hover:bg-secondary/80 text-[10px] font-bold text-rose-500 rounded border border-border/80 cursor-pointer transition-all"
+                className="px-2.5 py-1 bg-secondary hover:bg-secondary/80 text-xs font-bold text-rose-500 rounded border border-border/80 cursor-pointer transition-all"
               >
                 Hủy bỏ
               </button>
@@ -153,7 +157,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
         {voiceRecordingState === "processing" && (
           <div className="absolute inset-0 bg-card rounded-xl flex items-center justify-center gap-3 z-10 select-none">
             <Loader2 className="h-5 w-5 text-primary animate-spin" />
-            <span className="text-xs text-muted-foreground font-semibold animate-pulse">
+            <span className="text-sm text-muted-foreground font-semibold animate-pulse">
               Đang chuyển giọng nói thành văn bản tiếng Việt...
             </span>
           </div>
@@ -166,7 +170,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
           onKeyDown={handleKeyDown}
           rows={1}
           placeholder="Nhập câu hỏi tại đây... (Nhấn Enter để gửi, Shift+Enter xuống dòng)"
-          className="w-full bg-transparent border-0 outline-none text-xs text-foreground placeholder-muted-foreground resize-none py-1.5 px-2.5 max-h-[120px] scrollbar"
+          className="w-full bg-transparent border-0 outline-none text-sm text-foreground placeholder-muted-foreground resize-none py-1.5 px-2.5 max-h-[120px] scrollbar"
           disabled={isGenerating}
         />
 
@@ -199,7 +203,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
             {isGenerating ? (
               <button
                 onClick={stopGeneration}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs font-bold hover:bg-rose-500/25 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-500 text-sm font-bold hover:bg-rose-500/25 transition-all cursor-pointer"
               >
                 <Square className="h-3.5 w-3.5 fill-rose-500" />
                 <span>Dừng thế hệ</span>
@@ -208,7 +212,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
               <button
                 onClick={handleSubmit}
                 disabled={text.trim() === "" && attachedFiles.length === 0}
-                className="px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/95 transition-all shadow-premium-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer select-none"
+                className="px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/95 transition-all shadow-premium-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer select-none"
               >
                 <span>Gửi đi</span>
                 <Send className="h-3 w-3" />

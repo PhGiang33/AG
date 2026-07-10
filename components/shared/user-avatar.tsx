@@ -1,5 +1,9 @@
 "use client";
 
+// Component Hien thi anh dai dien cua nguoi dung (Avatar)
+// Neu khong co anh se hien thi chu cai dau cua ten.
+
+
 import * as Avatar from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +43,7 @@ export function UserAvatar({ src, name, className, status = "online" }: UserAvat
           className="w-full h-full object-cover rounded-full"
         />
         <Avatar.Fallback
-          className="w-full h-full flex items-center justify-center bg-primary/10 text-primary text-xs font-semibold rounded-full"
+          className="w-full h-full flex items-center justify-center bg-primary/10 text-primary text-sm font-semibold rounded-full"
           delayMs={600}
         >
           {initials}

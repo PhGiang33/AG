@@ -1,3 +1,6 @@
+// File chua cac dinh nghia kieu du lieu (TypeScript Interfaces & Types)
+// Giup code chat che hon, tranh loi runtime.
+
 export type UserRole = "Admin" | "User";
 
 export interface User {
@@ -15,8 +18,8 @@ export interface Message {
   content: string;
   timestamp: Date;
   status?: "sending" | "sent" | "error";
-  sources?: string[]; // IDs of referenced knowledge docs
-  agentLogs?: string[]; // Steps showing thinking details
+  sources?: string[]; // ID cua cac tai lieu tri thuc duoc tham chieu
+  agentLogs?: string[]; // Cac buoc hien thi chi tiet luong suy nghi
   agentData?: {
     type: "calendar" | "email" | "erp" | "crm";
     data: any;
@@ -30,7 +33,7 @@ export interface Conversation {
   updatedAt: Date;
   messages: Message[];
   isPinned?: boolean;
-  agentId?: string; // Optional locked agent id
+  agentId?: string; // ID cua agent bi khoa (tuy chon)
 }
 
 export interface ConnectedAccount {
@@ -42,7 +45,7 @@ export interface ConnectedAccount {
   status: "connected" | "syncing" | "error";
   lastSync: Date;
   permissions: string[];
-  isActive?: boolean; // Toggles whether this account's files are actively searched in the Knowledge Base
+  isActive?: boolean; // Cho phep bat/tat viec tim kiem tai lieu cua tai khoan nay trong Knowledge Base
 }
 
 export interface KnowledgeDoc {
@@ -54,10 +57,10 @@ export interface KnowledgeDoc {
   updatedBy: string;
   category: string;
   tags: string[];
-  content: string; // Mock preview text
-  folderPath?: string; // e.g. "Kế hoạch", "Báo cáo"
-  appSource?: string; // e.g. "Google Drive", "OneDrive", "ERP Odoo", "Salesforce"
-  accountId?: string; // Links this document to a specific ConnectedAccount id
+  content: string; // Doan van ban xem truoc (mock)
+  folderPath?: string; // vd: "Kế hoạch", "Báo cáo"
+  appSource?: string; // vd: "Google Drive", "OneDrive", "ERP Odoo", "Salesforce"
+  accountId?: string; // Lien ket tai lieu nay voi mot ConnectedAccount ID cu the
 }
 
 export interface WorkflowStep {
@@ -107,7 +110,7 @@ export interface AuditLog {
 
 export interface SystemStat {
   activeUsers: number;
-  totalCost: number; // in VND
+  totalCost: number; // Don vi: VNĐ
   agentRequests: number;
   costByDay: { day: string; cost: number }[];
   agentUsage: { name: string; count: number }[];
@@ -127,7 +130,7 @@ export interface AgentDefinition {
   description: string;
   status: "connected" | "disconnected" | "error";
   suggestedPrompts: string[];
-  lockedDataSource: string; // Document ID or data source description
+  lockedDataSource: string; // Document ID hoac mo ta nguon du lieu
 }
 
 export interface CalendarEvent {

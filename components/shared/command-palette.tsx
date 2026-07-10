@@ -1,5 +1,9 @@
 "use client";
 
+// Component Hop thoai tim kiem nhanh (Command Palette)
+// Mo ra khi bam Ctrl+K de tim kiem hoac truy cap nhanh cac trang.
+
+
 import { useState, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Search, Compass, MessageSquare, BookOpen, Settings, Shield, Moon, Sun, ArrowRight, X, Terminal, Cpu, Bot, Key } from "lucide-react";
@@ -140,7 +144,7 @@ export function CommandPalette() {
                   ) : (
                     Object.entries(groupedItems).map(([category, items]) => (
                       <div key={category} className="mb-2 last:mb-0">
-                        <div className="px-3 py-1 text-[10px] font-bold text-muted-foreground tracking-wider uppercase">
+                        <div className="px-3 py-1 text-xs font-bold text-muted-foreground tracking-wider uppercase">
                           {category}
                         </div>
                         <div className="space-y-0.5 mt-1">
@@ -157,7 +161,7 @@ export function CommandPalette() {
                                   <span className="truncate">{item.title}</span>
                                 </div>
                                 {item.shortcut ? (
-                                  <span className="text-[10px] font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-muted-foreground shrink-0 shadow-sm">
+                                  <span className="text-xs font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-muted-foreground shrink-0 shadow-sm">
                                     {item.shortcut}
                                   </span>
                                 ) : (
@@ -172,7 +176,7 @@ export function CommandPalette() {
                   )}
                 </div>
                 
-                <div className="bg-secondary/40 border-t border-border/80 px-4 py-2 flex items-center justify-between text-[11px] text-muted-foreground font-medium select-none">
+                <div className="bg-secondary/40 border-t border-border/80 px-4 py-2 flex items-center justify-between text-xs text-muted-foreground font-medium select-none">
                   <div className="flex items-center gap-3">
                     <span>Di chuyển <span className="font-mono bg-muted border px-1 rounded shadow-sm">↑↓</span></span>
                     <span>Chọn <span className="font-mono bg-muted border px-1 rounded shadow-sm">Enter</span></span>

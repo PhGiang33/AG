@@ -1,5 +1,8 @@
 "use client";
 
+// File nay la Trang Dang Nhap (Login Page)
+// Nguoi dung phai dang nhap o day truoc khi vao duoc Dashboard.
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Shield, Lock, Mail, ArrowRight, Loader2 } from "lucide-react";
@@ -7,25 +10,35 @@ import { useAppStore } from "@/lib/store";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 export default function LoginPage() {
+  // Dung useRouter de chuyen huong trang (redirect) sau khi dang nhap
   const router = useRouter();
+  
+  // Lay data user tu Zustand store
   const { user } = useAppStore();
+  
+  // Khai bao cac state cuc bo quan ly form dang nhap
   const [email, setEmail] = useState(user.email);
   const [password, setPassword] = useState("••••••••••••");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Ham xu ly su kien khi nguoi dung bam nut Dang Nhap
   const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); // Ngan form load lai trang
+    
+    // Kiem tra validate form don gian
     if (!email) {
       setError("Vui lòng điền địa chỉ email");
       return;
     }
+    
     setLoading(true);
     setError("");
 
-    // Simulate login delay
+    // Mo phong thoi gian doi cua API login (1.5 giay)
     setTimeout(() => {
       setLoading(false);
+      // Chuyen huong vao trang dashboard
       router.push("/dashboard");
     }, 1500);
   };
@@ -48,20 +61,20 @@ export default function LoginPage() {
             AI
           </div>
           <h1 className="text-xl font-bold text-foreground">Cổng Thông Tin Enterprise AI</h1>
-          <p className="text-xs text-muted-foreground mt-1.5">
+          <p className="text-sm text-muted-foreground mt-1.5">
             Đăng nhập hệ thống quản lý tri thức nội bộ VinaCorp
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-xs text-destructive font-medium">
+          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive font-medium">
             {error}
           </div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-muted-foreground" htmlFor="email">
+            <label className="text-sm font-semibold text-muted-foreground" htmlFor="email">
               Địa chỉ Email doanh nghiệp
             </label>
             <div className="relative">
@@ -80,10 +93,10 @@ export default function LoginPage() {
 
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-muted-foreground" htmlFor="password">
+              <label className="text-sm font-semibold text-muted-foreground" htmlFor="password">
                 Mật khẩu đăng nhập
               </label>
-              <a href="#" className="text-[10px] text-primary hover:underline font-bold">
+              <a href="#" className="text-xs text-primary hover:underline font-bold">
                 Quên mật khẩu?
               </a>
             </div>
@@ -121,7 +134,7 @@ export default function LoginPage() {
         </form>
 
         {/* Security badge footer */}
-        <div className="mt-8 pt-6 border-t border-border/60 flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground select-none">
+        <div className="mt-8 pt-6 border-t border-border/60 flex items-center justify-center gap-1.5 text-xs text-muted-foreground select-none">
           <Shield className="h-4 w-4 text-emerald-500" />
           <span>Bảo mật 2 lớp SSL & Mã hóa tài liệu ISO 27001</span>
         </div>

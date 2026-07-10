@@ -3,7 +3,11 @@ import { persist } from "zustand/middleware";
 import { User, UserRole, Conversation, Message, ConnectedAccount, Workflow, PromptTemplate, KnowledgeDoc } from "../types";
 import { mockUser, mockConversations, mockAccounts, mockWorkflows, mockPrompts, mockKnowledgeDocs } from "../mock-data";
 
-// 1. App Store: role, sidebar, notifications
+// ==========================================
+// 1. App Store (Quan ly state chung cua toan app)
+// Quan ly phan quyen (role), trang thai sidebar, va he thong thong bao.
+// Su dung Zustand middleware 'persist' de luu state vao LocalStorage.
+// ==========================================
 interface AppState {
   user: User;
   setRole: (role: UserRole) => void;
@@ -45,7 +49,10 @@ export const useAppStore = create<AppState>()(
   )
 );
 
-// 2. Chat Store: Conversations list, active chat, streaming, sources
+// ==========================================
+// 2. Chat Store (Quan ly state cho chuc nang Chat voi AI)
+// Quan ly danh sach hoi thoai, tin nhan, source data va trang thai dang generate cua AI.
+// ==========================================
 interface ChatState {
   conversations: Conversation[];
   activeConversationId: string | null;
@@ -169,7 +176,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setVoiceRecordingState: (voiceRecordingState) => set({ voiceRecordingState })
 }));
 
-// 3. Workflow Store: execution flow Simulation
+// ==========================================
+// 3. Workflow Store (Quan ly cac quy trinh tu dong hoa)
+// Giup theo doi tien trinh chay cac workflow, handle viec update tung step.
+// ==========================================
 interface WorkflowState {
   workflows: Workflow[];
   activeWorkflowId: string | null;
@@ -280,7 +290,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   }
 }));
 
-// 4. Accounts Store: OAuth flow simulation
+// ==========================================
+// 4. Accounts Store (Quan ly ket noi tai khoan OAuth cua User)
+// Vi du: Ket noi Google, Microsoft, Salesforce.
+// ==========================================
 interface AccountState {
   accounts: ConnectedAccount[];
   isConnecting: boolean;
@@ -345,7 +358,10 @@ export const useAccountStore = create<AccountState>((set) => ({
   }))
 }));
 
-// 5. Command Palette Store
+// ==========================================
+// 5. Command Palette Store (Quan ly thanh tim kiem nhanh)
+// Bam Ctrl+K de hien thi hoac bam nut Search tren Header.
+// ==========================================
 interface CommandState {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;

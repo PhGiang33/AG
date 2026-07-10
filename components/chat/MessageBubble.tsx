@@ -1,5 +1,9 @@
 "use client";
 
+// Component khung tin nhan (Message Bubble)
+// Hien thi tung bong bong tin nhan cua Nguoi dung hoac AI.
+
+
 import { Message, KnowledgeDoc } from "@/lib/types";
 import { UserAvatar } from "../shared/user-avatar";
 import { useAppStore } from "@/lib/store";
@@ -46,7 +50,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     const flushList = (key: string) => {
       if (listItems.length > 0) {
         elements.push(
-          <ul key={`list-${key}`} className="list-disc pl-5 my-2 space-y-1 text-xs">
+          <ul key={`list-${key}`} className="list-disc pl-5 my-2 space-y-1 text-sm">
             {listItems.map((item, idx) => (
               <li key={idx} dangerouslySetInnerHTML={{ __html: parseInlineMarkdown(item) }} />
             ))}
@@ -64,7 +68,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         const bodyRows = tableRows.slice(2); // Skip separator row
         elements.push(
           <div key={`table-wrapper-${key}`} className="my-3 overflow-x-auto rounded-lg border border-border shadow-sm">
-            <table className="min-w-full divide-y divide-border text-left text-xs">
+            <table className="min-w-full divide-y divide-border text-left text-sm">
               <thead className="bg-secondary/40 font-bold text-foreground">
                 <tr>
                   {headers.map((h, idx) => (
@@ -109,8 +113,8 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         const codeId = `code-${i}`;
 
         elements.push(
-          <div key={codeId} className="my-3 border border-border rounded-lg overflow-hidden shadow-premium-sm text-xs font-mono">
-            <div className="bg-secondary/50 px-4 py-1.5 flex items-center justify-between text-[10px] text-muted-foreground border-b border-border font-sans select-none">
+          <div key={codeId} className="my-3 border border-border rounded-lg overflow-hidden shadow-premium-sm text-sm font-mono">
+            <div className="bg-secondary/50 px-4 py-1.5 flex items-center justify-between text-xs text-muted-foreground border-b border-border font-sans select-none">
               <span className="uppercase font-bold">{lang}</span>
               <button
                 onClick={() => handleCopyCode(codeString, codeId)}
@@ -178,7 +182,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         elements.push(
           <p
             key={i}
-            className="my-1.5 leading-relaxed text-xs text-muted-foreground dark:text-foreground/90"
+            className="my-1.5 leading-relaxed text-sm text-muted-foreground dark:text-foreground/90"
             dangerouslySetInnerHTML={{ __html: parseInlineMarkdown(line) }}
           />
         );
@@ -228,7 +232,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       {isUser ? (
         <UserAvatar src={user.avatar} name={user.name} status="online" className="h-8 w-8 shrink-0" />
       ) : (
-        <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-violet-400 text-primary-foreground font-black text-xs flex items-center justify-center shrink-0 shadow-md select-none">
+        <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary to-violet-400 text-primary-foreground font-black text-sm flex items-center justify-center shrink-0 shadow-md select-none">
           AI
         </div>
       )}
@@ -237,10 +241,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       <div className="flex-1 min-w-0 max-w-[80%] flex flex-col items-start gap-1">
         {/* Timestamp */}
         <div className="flex items-center gap-2 select-none">
-          <span className="text-[10px] font-bold text-muted-foreground/80">
+          <span className="text-xs font-bold text-muted-foreground/80">
             {isUser ? user.name : "AI Assistant"}
           </span>
-          <span className="text-[9px] text-muted-foreground/60">
+          <span className="text-xs text-muted-foreground/60">
             {new Date(message.timestamp).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
           </span>
         </div>
@@ -248,7 +252,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {/* Message body */}
         <div
           className={cn(
-            "rounded-xl px-4 py-3 border shadow-premium-sm text-xs leading-relaxed relative",
+            "rounded-xl px-4 py-3 border shadow-premium-sm text-sm leading-relaxed relative",
             isUser
               ? "bg-primary text-primary-foreground border-primary rounded-tr-none ml-auto"
               : "bg-secondary/30 text-foreground border-border/80 border-l-[3px] border-l-primary/75 rounded-tl-none mr-auto"
@@ -275,7 +279,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               <a
                 key={doc.id}
                 href={`/knowledge?preview=${doc.id}`}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary/60 hover:bg-secondary border border-border text-[10px] text-muted-foreground hover:text-foreground font-bold transition-all shadow-premium-sm cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-secondary/60 hover:bg-secondary border border-border text-xs text-muted-foreground hover:text-foreground font-bold transition-all shadow-premium-sm cursor-pointer"
               >
                 <FileText className="h-3 w-3 text-primary shrink-0" />
                 <span>Citations: {doc.title.split(".")[0]}</span>

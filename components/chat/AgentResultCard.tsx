@@ -1,5 +1,9 @@
 "use client";
 
+// Component hien thi ket qua tu cac Agent
+// Dung de hien thi UI dac thu khi AI tra ve du lieu tu ERP, CRM...
+
+
 import { CalendarEvent, EmailItem, ERPStockItem, CRMOpportunity } from "@/lib/types";
 import { Calendar, Clock, MapPin, Mail, Server, Shield, FileText, CheckCircle2, AlertCircle, ArrowRight, ExternalLink, Inbox } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
@@ -64,23 +68,23 @@ function CalendarResultView({ events }: { events: CalendarEvent[] }) {
   return (
     <div className="w-full bg-card border border-border/80 rounded-xl overflow-hidden shadow-premium-sm max-w-xl select-none">
       <div className="bg-secondary/40 px-4 py-3 border-b border-border/60 flex items-center justify-between">
-        <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+        <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
           <Calendar className="h-4 w-4 text-primary" />
           <span>Lịch biểu chi tiết tuần này</span>
         </span>
-        <span className="text-[10px] text-muted-foreground font-medium">Google Calendar</span>
+        <span className="text-xs text-muted-foreground font-medium">Google Calendar</span>
       </div>
 
       <div className="divide-y divide-border/50">
         {dates.length === 0 ? (
-          <div className="p-6 text-center text-xs text-muted-foreground flex flex-col items-center">
+          <div className="p-6 text-center text-sm text-muted-foreground flex flex-col items-center">
             <Inbox className="h-6 w-6 text-muted-foreground/30 mb-1" />
             <span>Không có lịch hẹn nào sắp tới</span>
           </div>
         ) : (
           dates.map((date) => (
             <div key={date} className="p-4 space-y-2.5">
-              <h5 className="text-[11px] font-bold text-primary/90 tracking-wide uppercase">
+              <h5 className="text-xs font-bold text-primary/90 tracking-wide uppercase">
                 {getDayLabel(date)}
               </h5>
               <div className="space-y-2">
@@ -90,7 +94,7 @@ function CalendarResultView({ events }: { events: CalendarEvent[] }) {
                   return (
                     <div
                       key={event.id}
-                      className="flex items-start justify-between gap-3 text-xs p-2 rounded-lg bg-secondary/20 hover:bg-secondary/40 transition-colors border border-border/40"
+                      className="flex items-start justify-between gap-3 text-sm p-2 rounded-lg bg-secondary/20 hover:bg-secondary/40 transition-colors border border-border/40"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -102,7 +106,7 @@ function CalendarResultView({ events }: { events: CalendarEvent[] }) {
                           />
                           <span className="font-bold text-foreground">{event.title}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground pl-4">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground pl-4">
                           <Clock className="h-3 w-3 shrink-0" />
                           <span className="font-mono">{event.startTime} - {event.endTime}</span>
                           <span className="text-border">|</span>
@@ -116,7 +120,7 @@ function CalendarResultView({ events }: { events: CalendarEvent[] }) {
                           href="https://meet.google.com"
                           target="_blank"
                           rel="noreferrer"
-                          className="px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-[10px] font-bold rounded flex items-center gap-0.5 shrink-0 transition-colors"
+                          className="px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-xs font-bold rounded flex items-center gap-0.5 shrink-0 transition-colors"
                         >
                           <span>Meet</span>
                           <ExternalLink className="h-2.5 w-2.5" />
@@ -132,10 +136,10 @@ function CalendarResultView({ events }: { events: CalendarEvent[] }) {
       </div>
 
       <div className="bg-secondary/20 border-t border-border/60 px-4 py-3 flex gap-2 justify-end">
-        <button className="px-2.5 py-1 bg-secondary text-[10px] font-bold text-muted-foreground hover:text-foreground border border-border/80 rounded transition-colors cursor-pointer">
+        <button className="px-2.5 py-1 bg-secondary text-xs font-bold text-muted-foreground hover:text-foreground border border-border/80 rounded transition-colors cursor-pointer">
           Xuất file .ics
         </button>
-        <button className="px-2.5 py-1 bg-primary text-primary-foreground text-[10px] font-bold rounded shadow-premium-sm hover:bg-primary/95 transition-all cursor-pointer">
+        <button className="px-2.5 py-1 bg-primary text-primary-foreground text-xs font-bold rounded shadow-premium-sm hover:bg-primary/95 transition-all cursor-pointer">
           Đồng bộ vào lịch của tôi
         </button>
       </div>
@@ -148,11 +152,11 @@ function EmailResultView({ emails }: { emails: EmailItem[] }) {
   return (
     <div className="w-full bg-card border border-border/80 rounded-xl overflow-hidden shadow-premium-sm max-w-xl select-none">
       <div className="bg-secondary/40 px-4 py-3 border-b border-border/60 flex items-center justify-between">
-        <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+        <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
           <Mail className="h-4 w-4 text-primary" />
           <span>Danh sách thư điện tử chưa đọc</span>
         </span>
-        <span className="text-[10px] text-muted-foreground font-medium">Gmail</span>
+        <span className="text-xs text-muted-foreground font-medium">Gmail</span>
       </div>
 
       <div className="divide-y divide-border/50">
@@ -163,15 +167,15 @@ function EmailResultView({ emails }: { emails: EmailItem[] }) {
             )}
             <div className="flex-1 min-w-0 pl-1">
               <div className="flex items-center justify-between gap-2">
-                <span className={cn("text-xs font-semibold text-foreground truncate", m.unread && "font-extrabold")}>
+                <span className={cn("text-sm font-semibold text-foreground truncate", m.unread && "font-extrabold")}>
                   {m.from}
                 </span>
-                <span className="text-[9px] text-muted-foreground shrink-0 font-mono">{m.date}</span>
+                <span className="text-xs text-muted-foreground shrink-0 font-mono">{m.date}</span>
               </div>
-              <h6 className={cn("text-[11px] text-foreground/90 mt-0.5 truncate", m.unread && "font-semibold")}>
+              <h6 className={cn("text-xs text-foreground/90 mt-0.5 truncate", m.unread && "font-semibold")}>
                 {m.subject}
               </h6>
-              <p className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
+              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                 {m.summary}
               </p>
             </div>
@@ -187,15 +191,15 @@ function ERPResultView({ items }: { items: ERPStockItem[] }) {
   return (
     <div className="w-full bg-card border border-border/80 rounded-xl overflow-hidden shadow-premium-sm max-w-2xl select-none">
       <div className="bg-secondary/40 px-4 py-3 border-b border-border/60 flex items-center justify-between">
-        <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+        <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
           <Server className="h-4 w-4 text-primary" />
           <span>Danh mục tồn kho Odoo ERP</span>
         </span>
-        <span className="text-[10px] text-muted-foreground font-medium">Odoo ERP</span>
+        <span className="text-xs text-muted-foreground font-medium">Odoo ERP</span>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs border-collapse">
+        <table className="w-full text-left text-sm border-collapse">
           <thead>
             <tr className="bg-secondary/20 border-b border-border/50 text-muted-foreground font-bold">
               <th className="p-3">Sản phẩm</th>
@@ -209,7 +213,7 @@ function ERPResultView({ items }: { items: ERPStockItem[] }) {
             {items.map((i) => (
               <tr key={i.id} className="hover:bg-secondary/15 transition-colors">
                 <td className="p-3 font-semibold text-foreground">{i.name}</td>
-                <td className="p-3 font-mono text-[10px] text-muted-foreground">{i.sku}</td>
+                <td className="p-3 font-mono text-xs text-muted-foreground">{i.sku}</td>
                 <td className="p-3 text-right font-bold text-foreground">{i.stock.toLocaleString()}</td>
                 <td className="p-3 text-muted-foreground">{i.location}</td>
                 <td className="p-3 text-right font-bold text-primary">{formatCurrency(i.price)}</td>
@@ -227,11 +231,11 @@ function CRMResultView({ deals }: { deals: CRMOpportunity[] }) {
   return (
     <div className="w-full bg-card border border-border/80 rounded-xl overflow-hidden shadow-premium-sm max-w-xl select-none">
       <div className="bg-secondary/40 px-4 py-3 border-b border-border/60 flex items-center justify-between">
-        <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+        <span className="text-sm font-bold text-foreground flex items-center gap-1.5">
           <Shield className="h-4 w-4 text-primary" />
           <span>Cơ hội kinh doanh tiềm năng</span>
         </span>
-        <span className="text-[10px] text-muted-foreground font-medium">Salesforce CRM</span>
+        <span className="text-xs text-muted-foreground font-medium">Salesforce CRM</span>
       </div>
 
       <div className="divide-y divide-border/50">
@@ -243,19 +247,19 @@ function CRMResultView({ deals }: { deals: CRMOpportunity[] }) {
           return (
             <div key={d.id} className="p-4 hover:bg-secondary/10 transition-all flex justify-between items-center gap-4">
               <div className="space-y-1 flex-1 min-w-0">
-                <h5 className="text-xs font-bold text-foreground truncate">{d.name}</h5>
-                <p className="text-[10px] text-muted-foreground truncate">Khách hàng: {d.client}</p>
-                <p className="text-[9px] text-muted-foreground">Dự kiến đóng: {d.closeDate}</p>
+                <h5 className="text-sm font-bold text-foreground truncate">{d.name}</h5>
+                <p className="text-xs text-muted-foreground truncate">Khách hàng: {d.client}</p>
+                <p className="text-xs text-muted-foreground">Dự kiến đóng: {d.closeDate}</p>
               </div>
 
               <div className="text-right space-y-1.5 shrink-0">
-                <div className="text-xs font-bold text-foreground font-mono">
+                <div className="text-sm font-bold text-foreground font-mono">
                   {formatCurrency(d.value)}
                 </div>
                 <div>
                   <span
                     className={cn(
-                      "text-[9px] font-bold px-2 py-0.5 rounded-full select-none",
+                      "text-xs font-bold px-2 py-0.5 rounded-full select-none",
                       isWon
                         ? "text-emerald-500 bg-emerald-500/10 border border-emerald-500/20"
                         : isNegotiation

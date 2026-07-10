@@ -1,3 +1,6 @@
+// File chua cac ham tien ich dung chung (Utils)
+// Vi du: ghep class Tailwind (cn), format ngay thang...
+
 import { clsx, type ClassValue } from "clsx";
 import { type ClassNameValue, twMerge } from "tailwind-merge";
 

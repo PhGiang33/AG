@@ -1,5 +1,8 @@
 "use client";
 
+// Day la component Sidebar (Thanh dieu huong ben trai)
+// No hien thi menu dieu huong chinh cua he thong va co the thu gon/mo rong.
+
 import { useAppStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Compass, MessageSquare, BookOpen, Bot, Key, Settings, Shield, ChevronLeft, ChevronRight, Menu, LogOut, TerminalSquare } from "lucide-react";
@@ -9,16 +12,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
 export function Sidebar() {
-  const pathname = usePathname();
-  const router = useRouter();
+  const pathname = usePathname(); // Hook de lay URL hien tai
+  const router = useRouter(); // Hook de dieu huong trang
+  
+  // Lay cac state/ham dieu khien sidebar tu global store
   const { user, sidebarCollapsed, toggleSidebar, setSidebarCollapsed } = useAppStore();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false); // State quan ly sidebar tren mobile
 
-  // Close mobile sidebar on route change
+  // Tat sidebar tren mobile moi khi chuyen trang
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Khai bao danh sach cac trang co ban
   const navItems = [
     { name: "Tổng quan (Dashboard)", href: "/dashboard", icon: Compass },
     { name: "Trung tâm Agent", href: "/agents", icon: Bot },
@@ -26,12 +32,15 @@ export function Sidebar() {
     { name: "Cấu hình (Settings)", href: "/settings", icon: Settings },
   ];
 
+  // Khai bao danh sach menu rieng cho Admin
   const adminItems = [
     { name: "Quản trị hệ thống", href: "/admin", icon: Shield },
   ];
 
+  // Neu user la Admin thi hien thi them menu Admin, neu khong thi chi hien thi menu co ban
   const allItems = user.role === "Admin" ? [...navItems, ...adminItems] : navItems;
 
+  // Ham dang xuat (logout)
   const handleLogout = () => {
     router.push("/login");
   };
@@ -173,7 +182,7 @@ export function Sidebar() {
                 <Icon className={cn("h-5 w-5 shrink-0 transition-transform group-hover:scale-105", active ? "text-primary" : "text-muted-foreground")} />
                 {!sidebarCollapsed && <span className="truncate">{item.name}</span>}
                 {sidebarCollapsed && (
-                  <div className="absolute left-16 bg-popover text-popover-foreground border border-border px-2 py-1 rounded shadow-premium-md text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
+                  <div className="absolute left-16 bg-popover text-popover-foreground border border-border px-2 py-1 rounded shadow-premium-md text-sm font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
                     {item.name}
                   </div>
                 )}

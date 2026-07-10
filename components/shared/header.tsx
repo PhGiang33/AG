@@ -1,5 +1,8 @@
 "use client";
 
+// Day la component Header (Thanh cong cu phia tren cung)
+// No nam ngang toan bo chieu rong cua Main Workspace, chua thanh tim kiem, thong bao va profile.
+
 import { useAppStore, useCommandStore } from "@/lib/store";
 import { UserAvatar } from "./user-avatar";
 import { ThemeToggle } from "./theme-toggle";
@@ -9,37 +12,39 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export function Header() {
-  const router = useRouter();
+  const router = useRouter(); // Hook chuyen trang
+  // Lay thong tin user, thong bao va ham xu ly tu global store
   const { user, setRole, notifications, markAllNotificationsRead } = useAppStore();
-  const { setIsOpen: setCommandOpen } = useCommandStore();
+  const { setIsOpen: setCommandOpen } = useCommandStore(); // Mo hop thoai Command Palette
 
+  // Dem so luong thong bao chua doc
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const handleLogout = () => {
-    router.push("/login");
+    router.push("/login"); // Chuyen huong ve trang dang nhap
   };
 
   return (
     <header className="h-16 border-b border-border/60 bg-card/60 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-10 w-full">
-      {/* Search trigger button for Command Palette */}
+      {/* Search trigger button for Command Palette (Nut mo hop thoai tim kiem nhanh) */}
       <button
         onClick={() => setCommandOpen(true)}
-        className="w-full max-w-sm flex items-center justify-between px-3 py-1.5 rounded-lg border border-border/80 bg-secondary/35 text-muted-foreground hover:text-foreground hover:bg-secondary/60 hover:border-border transition-all text-xs text-left cursor-pointer outline-none focus:ring-2 focus:ring-primary/30"
+        className="w-full max-w-sm flex items-center justify-between px-3 py-1.5 rounded-lg border border-border/80 bg-secondary/35 text-muted-foreground hover:text-foreground hover:bg-secondary/60 hover:border-border transition-all text-sm text-left cursor-pointer outline-none focus:ring-2 focus:ring-primary/30"
       >
         <div className="flex items-center">
           <Search className="h-4 w-4 mr-2 text-muted-foreground" />
           <span>Tìm kiếm...</span>
         </div>
-        <kbd className="hidden sm:inline-block pointer-events-none select-none rounded border border-border/80 bg-card px-1.5 font-mono text-[10px] font-bold text-muted-foreground shadow-sm">
+        <kbd className="hidden sm:inline-block pointer-events-none select-none rounded border border-border/80 bg-card px-1.5 font-mono text-xs font-bold text-muted-foreground shadow-sm">
           Ctrl K
         </kbd>
       </button>
 
-      {/* Action group */}
+      {/* Action group (Nhom nut chuc nang ben phai) */}
       <div className="flex items-center gap-4">
         <ThemeToggle />
 
-        {/* Notifications Popover */}
+        {/* Notifications Popover (Hop thoai chua thong bao) */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button className="relative p-2 rounded-lg bg-secondary/50 hover:bg-secondary border border-border/60 text-muted-foreground hover:text-foreground transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-primary/40">
@@ -59,11 +64,11 @@ export function Header() {
               className="w-80 bg-card border border-border rounded-xl shadow-premium-lg p-1 z-30 outline-none animate-in fade-in-50 zoom-in-95 duration-100"
             >
               <div className="flex items-center justify-between px-3 py-2 border-b border-border/60">
-                <span className="text-xs font-bold text-foreground">Thông báo ({unreadCount})</span>
+                <span className="text-sm font-bold text-foreground">Thông báo ({unreadCount})</span>
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllNotificationsRead}
-                    className="text-[10px] text-primary font-bold hover:underline cursor-pointer"
+                    className="text-xs text-primary font-bold hover:underline cursor-pointer"
                   >
                     Đọc tất cả
                   </button>
@@ -71,7 +76,7 @@ export function Header() {
               </div>
               <div className="max-h-64 overflow-y-auto py-1 scrollbar">
                 {notifications.length === 0 ? (
-                  <div className="py-8 text-center text-xs text-muted-foreground">Không có thông báo mới</div>
+                  <div className="py-8 text-center text-sm text-muted-foreground">Không có thông báo mới</div>
                 ) : (
                   notifications.map((n) => (
                     <div
@@ -83,9 +88,9 @@ export function Header() {
                     >
                       <div className={cn("h-1.5 w-1.5 rounded-full shrink-0 mt-1.5", !n.read ? "bg-primary" : "bg-transparent")} />
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-foreground truncate">{n.title}</p>
-                        <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5">{n.desc}</p>
-                        <span className="text-[9px] text-muted-foreground/80 mt-1 block">{n.time}</span>
+                        <p className="text-sm font-bold text-foreground truncate">{n.title}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{n.desc}</p>
+                        <span className="text-xs text-muted-foreground/80 mt-1 block">{n.time}</span>
                       </div>
                     </div>
                   ))
@@ -95,7 +100,7 @@ export function Header() {
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
 
-        {/* User profile with switches */}
+        {/* User profile with switches (Thong tin ca nhan va Menu Dropdown) */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-secondary/60 cursor-pointer outline-none">
@@ -110,12 +115,12 @@ export function Header() {
               className="w-56 bg-card border border-border rounded-xl shadow-premium-lg p-1.5 z-30 outline-none animate-in fade-in-50 zoom-in-95 duration-100"
             >
               <div className="px-2.5 py-2 border-b border-border/60 mb-1">
-                <p className="text-xs font-bold text-foreground truncate">{user.name}</p>
-                <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
+                <p className="text-sm font-bold text-foreground truncate">{user.name}</p>
+                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
               </div>
 
               {/* Role switching section for DEMO */}
-              <div className="px-2.5 py-1 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              <div className="px-2.5 py-1 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Demo Role Switcher
               </div>
               <DropdownMenu.Item
@@ -123,7 +128,7 @@ export function Header() {
                   setRole("User");
                   router.refresh();
                 }}
-                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-secondary outline-none cursor-pointer"
+                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary outline-none cursor-pointer"
               >
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" />
@@ -136,7 +141,7 @@ export function Header() {
                   setRole("Admin");
                   router.refresh();
                 }}
-                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-secondary outline-none cursor-pointer border-b border-border/60 pb-2 mb-1"
+                className="flex items-center justify-between px-2.5 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary outline-none cursor-pointer border-b border-border/60 pb-2 mb-1"
               >
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4" />
@@ -147,7 +152,7 @@ export function Header() {
 
               <DropdownMenu.Item
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs text-rose-500 hover:bg-rose-50/10 outline-none cursor-pointer"
+                className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm text-rose-500 hover:bg-rose-50/10 outline-none cursor-pointer"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Đăng xuất</span>

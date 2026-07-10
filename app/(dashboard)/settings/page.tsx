@@ -1,5 +1,8 @@
 "use client";
 
+// File nay la Trang Cai Dat (Settings Page)
+// Cho phep nguoi dung thay doi thong tin ho so, mat khau, tai khoan lien ket...
+
 import { useAppStore, useAccountStore } from "@/lib/store";
 import { Settings, User, Bell, Paintbrush, Cpu, Shield, Check, Info, Key, RefreshCw, AlertCircle, CheckCircle2, Trash2, ExternalLink, Loader2, X } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -8,22 +11,24 @@ import { cn, formatRelativeTime } from "@/lib/utils";
 import * as Dialog from "@radix-ui/react-dialog";
 
 export default function SettingsPage() {
+  // Lay cac ham/state global tu Zustand Store
   const { user, setRole, addNotification } = useAppStore();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme(); // Hook de doi che do Dark/Light mode
   
   const { accounts, isConnecting, connectingProvider, connectAccount, disconnectAccount, toggleAccountActive } = useAccountStore();
   
+  // State quan ly tab dang mo
   const [activeTab, setActiveTab] = useState<"profile" | "theme" | "notification" | "ai" | "accounts" | "security">("profile");
   
   const [llmPref, setLlmPref] = useState("gpt-4o");
   const [notifSound, setNotifSound] = useState(true);
 
-  // State for password change
+  // State luu tru tam thoi form thay doi mat khau
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Accounts state ported
+  // State quan ly ket noi tai khoan OAuth
   const [accountsLoading, setAccountsLoading] = useState(true);
   const [oauthModalOpen, setOauthModalOpen] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
@@ -31,13 +36,14 @@ export default function SettingsPage() {
   const [emailInput, setEmailInput] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  // State for new account request modal
+  // State quan ly popup (Modal) yeu cau tai khoan moi
   const [requestAccountModalOpen, setRequestAccountModalOpen] = useState(false);
   const [requestFormProvider, setRequestFormProvider] = useState<string | null>(null);
-  const [requestFormEmail, setRequestFormEmail] = useState(user.email); // Default to user's email, but editable
+  const [requestFormEmail, setRequestFormEmail] = useState(user.email); // Mac dinh lay email cua user
   const [requestFormReason, setRequestFormReason] = useState("");
 
-  // Sync hash in URL with active settings tab
+  // Hook useEffect: Lang nghe su thay doi cua URL hash de chuyen tab tuong ung
+  // Vi du: URL la /settings#accounts thi tu dong mo tab Accounts
   useEffect(() => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash;
@@ -152,7 +158,7 @@ export default function SettingsPage() {
     odoo: {
       name: "ERP Odoo VinaCorp",
       logo: (
-        <div className="h-6 w-6 rounded-md bg-[#714B67] flex items-center justify-center text-white font-extrabold text-[10px] select-none shrink-0">
+        <div className="h-6 w-6 rounded-md bg-[#714B67] flex items-center justify-center text-white font-extrabold text-xs select-none shrink-0">
           odoo
         </div>
       ),
@@ -198,7 +204,7 @@ export default function SettingsPage() {
             <Settings className="h-6 w-6 text-primary" />
             <span>Cài đặt hệ thống (Settings)</span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Điều chỉnh ngôn ngữ, cấu hình tài khoản cá nhân, và thiết lập ưu tiên mô hình ngôn ngữ AI.
           </p>
         </div>
@@ -215,7 +221,7 @@ export default function SettingsPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={cn(
-                  "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left text-xs font-semibold cursor-pointer transition-colors",
+                  "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left text-sm font-semibold cursor-pointer transition-colors",
                   isActive
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
@@ -233,37 +239,37 @@ export default function SettingsPage() {
           {/* Tab 1: Profile */}
           {activeTab === "profile" && (
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-foreground select-none">Hồ sơ người dùng</h3>
-              <p className="text-[11px] text-muted-foreground select-none">Thông tin định danh của bạn được đồng bộ từ hệ thống Nhân sự và không thể thay đổi tại đây.</p>
+              <h3 className="text-sm font-bold text-foreground select-none">Hồ sơ người dùng</h3>
+              <p className="text-xs text-muted-foreground select-none">Thông tin định danh của bạn được đồng bộ từ hệ thống Nhân sự và không thể thay đổi tại đây.</p>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-muted-foreground select-none">Họ và tên</label>
+                  <label className="text-xs font-bold text-muted-foreground select-none">Họ và tên</label>
                   <input
                     type="text"
                     value={user.name}
                     disabled
-                    className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-xs text-muted-foreground cursor-not-allowed select-all"
+                    className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-sm text-muted-foreground cursor-not-allowed select-all"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-muted-foreground select-none">Phòng ban</label>
+                  <label className="text-xs font-bold text-muted-foreground select-none">Phòng ban</label>
                   <input
                     type="text"
                     value={user.department || "Chưa phân ban"}
                     disabled
-                    className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-xs text-muted-foreground cursor-not-allowed select-all"
+                    className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-sm text-muted-foreground cursor-not-allowed select-all"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-muted-foreground select-none">Địa chỉ Email liên hệ</label>
+                <label className="text-xs font-bold text-muted-foreground select-none">Địa chỉ Email liên hệ</label>
                 <input
                   type="email"
                   value={user.email}
                   disabled
-                  className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-xs text-muted-foreground cursor-not-allowed select-all"
+                  className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-sm text-muted-foreground cursor-not-allowed select-all"
                 />
               </div>
             </div>
@@ -272,16 +278,16 @@ export default function SettingsPage() {
           {/* Tab 2: Theme */}
           {activeTab === "theme" && (
             <div className="space-y-4 select-none">
-              <h3 className="text-xs font-bold text-foreground">Giao diện hiển thị</h3>
-              <p className="text-[11px] text-muted-foreground">Tùy chỉnh tông màu và ngôn ngữ hiển thị trên cổng thông tin.</p>
+              <h3 className="text-sm font-bold text-foreground">Giao diện hiển thị</h3>
+              <p className="text-xs text-muted-foreground">Tùy chỉnh tông màu và ngôn ngữ hiển thị trên cổng thông tin.</p>
 
               <div className="space-y-2.5">
-                <span className="text-[10px] font-bold text-muted-foreground">Chế độ tối/sáng</span>
+                <span className="text-xs font-bold text-muted-foreground">Chế độ tối/sáng</span>
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setTheme("light")}
                     className={cn(
-                      "p-3 rounded-lg border text-left text-xs font-semibold flex items-center justify-between cursor-pointer",
+                      "p-3 rounded-lg border text-left text-sm font-semibold flex items-center justify-between cursor-pointer",
                       theme === "light" ? "border-primary bg-primary/5 text-primary" : "border-border hover:bg-secondary/40"
                     )}
                   >
@@ -291,7 +297,7 @@ export default function SettingsPage() {
                   <button
                     onClick={() => setTheme("dark")}
                     className={cn(
-                      "p-3 rounded-lg border text-left text-xs font-semibold flex items-center justify-between cursor-pointer",
+                      "p-3 rounded-lg border text-left text-sm font-semibold flex items-center justify-between cursor-pointer",
                       theme === "dark" ? "border-primary bg-primary/5 text-primary" : "border-border hover:bg-secondary/40"
                     )}
                   >
@@ -302,12 +308,12 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2 pt-2">
-                <span className="text-[10px] font-bold text-muted-foreground">Ngôn ngữ chính</span>
+                <span className="text-xs font-bold text-muted-foreground">Ngôn ngữ chính</span>
                 <div className="flex gap-2">
-                  <span className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-xs font-bold text-primary">
+                  <span className="px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-sm font-bold text-primary">
                     Tiếng Việt (Việt Nam)
                   </span>
-                  <span className="px-3 py-1.5 rounded-lg bg-secondary/50 border border-border text-xs text-muted-foreground opacity-50 cursor-not-allowed">
+                  <span className="px-3 py-1.5 rounded-lg bg-secondary/50 border border-border text-sm text-muted-foreground opacity-50 cursor-not-allowed">
                     English (US)
                   </span>
                 </div>
@@ -318,14 +324,14 @@ export default function SettingsPage() {
           {/* Tab 3: Notification */}
           {activeTab === "notification" && (
             <div className="space-y-4 select-none">
-              <h3 className="text-xs font-bold text-foreground">Thiết lập thông báo</h3>
-              <p className="text-[11px] text-muted-foreground">Cấu hình cách thức nhận cảnh báo lỗi từ hệ thống tự động hóa.</p>
+              <h3 className="text-sm font-bold text-foreground">Thiết lập thông báo</h3>
+              <p className="text-xs text-muted-foreground">Cấu hình cách thức nhận cảnh báo lỗi từ hệ thống tự động hóa.</p>
 
               <div className="space-y-3">
                 <label className="flex items-center justify-between p-2 rounded hover:bg-secondary/35 transition-colors cursor-pointer">
                   <div className="space-y-0.5">
-                    <p className="text-xs font-semibold text-foreground">Âm thanh cảnh báo</p>
-                    <p className="text-[10px] text-muted-foreground">Phát âm thanh nhỏ khi có lỗi workflow phát sinh.</p>
+                    <p className="text-sm font-semibold text-foreground">Âm thanh cảnh báo</p>
+                    <p className="text-xs text-muted-foreground">Phát âm thanh nhỏ khi có lỗi workflow phát sinh.</p>
                   </div>
                   <input
                     type="checkbox"
@@ -337,8 +343,8 @@ export default function SettingsPage() {
                 
                 <label className="flex items-center justify-between p-2 rounded hover:bg-secondary/35 transition-colors cursor-pointer">
                   <div className="space-y-0.5">
-                    <p className="text-xs font-semibold text-foreground">Email báo cáo định kỳ</p>
-                    <p className="text-[10px] text-muted-foreground">Gửi email tóm tắt chi phí tài chính LLM vào cuối tuần.</p>
+                    <p className="text-sm font-semibold text-foreground">Email báo cáo định kỳ</p>
+                    <p className="text-xs text-muted-foreground">Gửi email tóm tắt chi phí tài chính LLM vào cuối tuần.</p>
                   </div>
                   <input
                     type="checkbox"
@@ -353,8 +359,8 @@ export default function SettingsPage() {
           {/* Tab 4: AI Preference */}
           {activeTab === "ai" && (
             <div className="space-y-4 select-none">
-              <h3 className="text-xs font-bold text-foreground">Ưu tiên mô hình ngôn ngữ</h3>
-              <p className="text-[11px] text-muted-foreground">Lựa chọn mô hình AI mặc định cho các câu hỏi tra cứu tri thức.</p>
+              <h3 className="text-sm font-bold text-foreground">Ưu tiên mô hình ngôn ngữ</h3>
+              <p className="text-xs text-muted-foreground">Lựa chọn mô hình AI mặc định cho các câu hỏi tra cứu tri thức.</p>
 
               <div className="space-y-2">
                 {[
@@ -371,11 +377,11 @@ export default function SettingsPage() {
                     )}
                   >
                     <div>
-                      <p className="text-xs font-bold text-foreground">{llm.name}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">{llm.speed}</p>
+                      <p className="text-sm font-bold text-foreground">{llm.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{llm.speed}</p>
                     </div>
                     <div className="text-right">
-                      <span className="text-[9px] font-bold bg-secondary px-2 py-0.5 rounded text-muted-foreground border">
+                      <span className="text-xs font-bold bg-secondary px-2 py-0.5 rounded text-muted-foreground border">
                         {llm.cost}
                       </span>
                     </div>
@@ -388,48 +394,48 @@ export default function SettingsPage() {
           {/* Tab 6: Security */}
           {activeTab === "security" && (
             <form onSubmit={handleSavePassword} className="space-y-4 select-none">
-              <h3 className="text-xs font-bold text-foreground">Thay đổi mật khẩu</h3>
-              <p className="text-[11px] text-muted-foreground">
+              <h3 className="text-sm font-bold text-foreground">Thay đổi mật khẩu</h3>
+              <p className="text-xs text-muted-foreground">
                 Để đảm bảo an toàn, hãy sử dụng mật khẩu mạnh (tối thiểu 8 ký tự) và thay đổi định kỳ.
               </p>
 
               <div className="space-y-1.5 pt-2">
-                <label className="text-[10px] font-bold text-muted-foreground">Mật khẩu hiện tại</label>
+                <label className="text-xs font-bold text-muted-foreground">Mật khẩu hiện tại</label>
                 <input
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Nhập mật khẩu hiện tại của bạn"
-                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-sm outline-none focus:border-primary text-foreground"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-2">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-muted-foreground">Mật khẩu mới</label>
+                  <label className="text-xs font-bold text-muted-foreground">Mật khẩu mới</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Nhập mật khẩu mới"
-                    className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                    className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-sm outline-none focus:border-primary text-foreground"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-muted-foreground">Xác nhận mật khẩu mới</label>
+                  <label className="text-xs font-bold text-muted-foreground">Xác nhận mật khẩu mới</label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Nhập lại mật khẩu mới"
-                    className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                    className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-sm outline-none focus:border-primary text-foreground"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="mt-4 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer select-none"
+                className="mt-4 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-sm font-bold shadow-premium-sm cursor-pointer select-none"
               >
                 Lưu mật khẩu
               </button>
@@ -441,8 +447,8 @@ export default function SettingsPage() {
           {activeTab === "accounts" && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-xs font-bold text-foreground font-display">Kết nối Dịch vụ Doanh nghiệp</h3>
-                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
+                <h3 className="text-sm font-bold text-foreground font-display">Kết nối Dịch vụ Doanh nghiệp</h3>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                   Liên kết các tài khoản đám mây và công cụ doanh nghiệp để các Agent chuyên biệt có thể hoạt động và tra cứu dữ liệu.
                 </p>
               </div>
@@ -486,8 +492,8 @@ export default function SettingsPage() {
                               {detail.logo}
                             </div>
                             <div className="min-w-0">
-                              <h4 className="text-xs font-bold text-foreground truncate">{detail.name}</h4>
-                              <p className="text-[10px] text-muted-foreground truncate leading-none mt-1">
+                              <h4 className="text-sm font-bold text-foreground truncate">{detail.name}</h4>
+                              <p className="text-xs text-muted-foreground truncate leading-none mt-1">
                                 {providerConns.length > 0
                                   ? `Đã kết nối ${providerConns.length} tài khoản`
                                   : "Chưa liên kết"}
@@ -495,7 +501,7 @@ export default function SettingsPage() {
                             </div>
                           </div>
 
-                          <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
+                          <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
                             {detail.desc}
                           </p>
 
@@ -503,27 +509,27 @@ export default function SettingsPage() {
                           {providerConns.length > 0 && (
                             <div className="mt-4 pt-3 border-t border-border/60 space-y-2">
                               {providerConns.map((acc) => (
-                                <div key={acc.id} className="flex items-center justify-between gap-3 p-2 bg-secondary/25 border border-border/40 rounded-lg text-xs">
+                                <div key={acc.id} className="flex items-center justify-between gap-3 p-2 bg-secondary/25 border border-border/40 rounded-lg text-sm">
                                   <div className="min-w-0 flex-1">
                                     <p className="font-bold text-foreground truncate">{acc.name}</p>
-                                    <p className="text-[10px] text-muted-foreground truncate font-mono mt-0.5">{acc.email}</p>
+                                    <p className="text-xs text-muted-foreground truncate font-mono mt-0.5">{acc.email}</p>
                                     
                                     <div className="flex items-center gap-1.5 mt-1.5 select-none">
                                       {acc.status === "connected" ? (
-                                        <span className="text-[8px] font-bold text-emerald-500 bg-emerald-500/10 px-1 py-0.5 rounded leading-none">
+                                        <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-1 py-0.5 rounded leading-none">
                                           Đã đồng bộ
                                         </span>
                                       ) : acc.status === "syncing" ? (
-                                        <span className="text-[8px] font-bold text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded leading-none animate-pulse">
+                                        <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-1 py-0.5 rounded leading-none animate-pulse">
                                           Đồng bộ...
                                         </span>
                                       ) : (
-                                        <span className="text-[8px] font-bold text-rose-500 bg-rose-500/10 px-1 py-0.5 rounded leading-none flex items-center gap-0.5">
+                                        <span className="text-xs font-bold text-rose-500 bg-rose-500/10 px-1 py-0.5 rounded leading-none flex items-center gap-0.5">
                                           <AlertCircle className="h-2 w-2" />
                                           Lỗi
                                         </span>
                                       )}
-                                      <span className="text-[8px] text-muted-foreground font-mono leading-none">
+                                      <span className="text-xs text-muted-foreground font-mono leading-none">
                                         {formatRelativeTime(acc.lastSync)}
                                       </span>
                                     </div>
@@ -531,7 +537,7 @@ export default function SettingsPage() {
                                     {/* Permissions tags */}
                                     <div className="flex flex-wrap gap-1 mt-2.5">
                                       {acc.permissions?.map((perm) => (
-                                        <span key={perm} className="text-[9px] font-bold bg-primary/5 text-primary/80 border border-primary/10 px-1.5 py-0.5 rounded">
+                                        <span key={perm} className="text-xs font-bold bg-primary/5 text-primary/80 border border-primary/10 px-1.5 py-0.5 rounded">
                                           {perm}
                                         </span>
                                       ))}
@@ -561,7 +567,7 @@ export default function SettingsPage() {
                           ) : (
                             <button
                               onClick={() => handleStartConnect(provKey)}
-                              className="px-2.5 py-1 bg-secondary hover:bg-secondary/80 text-[10px] font-bold text-foreground rounded border border-border/80 cursor-pointer transition-colors"
+                              className="px-2.5 py-1 bg-secondary hover:bg-secondary/80 text-xs font-bold text-foreground rounded border border-border/80 cursor-pointer transition-colors"
                             >
                               Liên kết
                             </button>
@@ -575,7 +581,7 @@ export default function SettingsPage() {
               <div className="mt-6 pt-4 border-t border-border/60 flex justify-end">
                         <button
                           onClick={() => setRequestAccountModalOpen(true)}
-                          className="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer select-none"
+                          className="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-sm font-bold shadow-premium-sm cursor-pointer select-none"
                         >
                           Yêu cầu thêm tài khoản mới
                         </button>
@@ -598,7 +604,7 @@ export default function SettingsPage() {
                     {providerDetails[selectedProvider as keyof typeof providerDetails].logo}
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-foreground">
+                    <h3 className="text-sm font-bold text-foreground">
                       {oauthStep === 1
                         ? `Liên kết ${providerDetails[selectedProvider as keyof typeof providerDetails].name}`
                         : oauthStep === 2
@@ -610,28 +616,28 @@ export default function SettingsPage() {
 
                 {oauthStep === 1 && (
                   <>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       Bạn sẽ được chuyển hướng đến trang đăng nhập của nhà cung cấp để xác thực. <strong className="text-foreground">Chỉ tài khoản có email trùng với email đăng nhập của bạn mới được chấp nhận.</strong>
                     </p>
                     <div className="space-y-1.5 mt-2">
-                      <label className="text-[10px] font-bold text-muted-foreground">Email tài khoản</label>
+                      <label className="text-xs font-bold text-muted-foreground">Email tài khoản</label>
                       <input
                         type="email"
                         value={emailInput}
                         disabled
-                        className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-xs text-muted-foreground cursor-not-allowed select-all"
+                        className="w-full px-3 py-2 bg-secondary/20 border border-border/60 rounded-lg text-sm text-muted-foreground cursor-not-allowed select-all"
                       />
                     </div>
                     <div className="flex justify-end gap-2 mt-4 pt-2">
                       <button
                         onClick={() => setOauthModalOpen(false)}
-                        className="px-3 py-1.5 rounded-lg border border-border hover:bg-secondary text-xs font-semibold cursor-pointer"
+                        className="px-3 py-1.5 rounded-lg border border-border hover:bg-secondary text-sm font-semibold cursor-pointer"
                       >
                         Hủy bỏ
                       </button>
                       <button
                         onClick={handleRunOauthFlow}
-                        className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer"
+                        className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-sm font-bold shadow-premium-sm cursor-pointer"
                       >
                         Đồng ý kết nối
                       </button>
@@ -642,7 +648,7 @@ export default function SettingsPage() {
                 {oauthStep === 2 && (
                   <div className="py-6 flex flex-col items-center justify-center gap-3">
                     <Loader2 className="h-8 w-8 text-primary animate-spin" />
-                    <p className="text-xs text-muted-foreground text-center animate-pulse">
+                    <p className="text-sm text-muted-foreground text-center animate-pulse">
                       Đang đồng bộ phân quyền & dữ liệu tài liệu...
                     </p>
                   </div>
@@ -653,7 +659,7 @@ export default function SettingsPage() {
                     <div className="h-10 w-10 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center">
                       <CheckCircle2 className="h-6 w-6" />
                     </div>
-                    <p className="text-xs text-emerald-500 font-bold text-center">
+                    <p className="text-sm text-emerald-500 font-bold text-center">
                       Kết nối dịch vụ hoàn tất!
                     </p>
                   </div>
@@ -679,16 +685,16 @@ export default function SettingsPage() {
             </div>
             
             <form onSubmit={handleSendAccountRequest} className="space-y-4">
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Vui lòng điền thông tin tài khoản bạn muốn liên kết và lý do nghiệp vụ. Yêu cầu sẽ được gửi đến Admin để phê duyệt.
               </p>
               
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-muted-foreground">Nhà cung cấp dịch vụ</label>
+                <label className="text-xs font-bold text-muted-foreground">Nhà cung cấp dịch vụ</label>
                 <select
                   value={requestFormProvider || ""}
                   onChange={(e) => setRequestFormProvider(e.target.value)}
-                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground cursor-pointer"
+                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-sm outline-none focus:border-primary text-foreground cursor-pointer"
                 >
                   <option value="" disabled>Chọn nhà cung cấp</option>
                   {allProviders.map(provKey => {
@@ -701,24 +707,24 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-muted-foreground">Địa chỉ Email tài khoản</label>
+                <label className="text-xs font-bold text-muted-foreground">Địa chỉ Email tài khoản</label>
                 <input
                   type="email"
                   value={requestFormEmail}
                   onChange={(e) => setRequestFormEmail(e.target.value)}
                   placeholder="Ví dụ: ten.email@congty.vn"
-                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground"
+                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-sm outline-none focus:border-primary text-foreground"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-muted-foreground">Lý do yêu cầu (nghiệp vụ)</label>
+                <label className="text-xs font-bold text-muted-foreground">Lý do yêu cầu (nghiệp vụ)</label>
                 <textarea
                   value={requestFormReason}
                   onChange={(e) => setRequestFormReason(e.target.value)}
                   placeholder="Ví dụ: Cần truy cập dữ liệu từ tài khoản này để phân tích báo cáo dự án X."
                   rows={3}
-                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-xs outline-none focus:border-primary text-foreground resize-y"
+                  className="w-full px-3 py-2 bg-secondary/35 border border-border rounded-lg text-sm outline-none focus:border-primary text-foreground resize-y"
                 />
               </div>
 
@@ -726,14 +732,14 @@ export default function SettingsPage() {
                 <Dialog.Close asChild>
                   <button
                     type="button"
-                    className="px-3 py-1.5 rounded-lg border border-border hover:bg-secondary text-xs font-bold cursor-pointer"
+                    className="px-3 py-1.5 rounded-lg border border-border hover:bg-secondary text-sm font-bold cursor-pointer"
                   >
                     Hủy bỏ
                   </button>
                 </Dialog.Close>
                 <button
                   type="submit"
-                  className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-xs font-bold shadow-premium-sm cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/95 text-primary-foreground text-sm font-bold shadow-premium-sm cursor-pointer"
                 >
                   Gửi yêu cầu
                 </button>
@@ -748,20 +754,20 @@ export default function SettingsPage() {
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50" />
           <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xs bg-card border border-border shadow-premium-lg rounded-xl p-5 outline-none z-50">
-            <Dialog.Title className="text-xs font-bold text-foreground">Ngắt kết nối tài khoản?</Dialog.Title>
-            <p className="text-[11px] text-muted-foreground mt-2">
+            <Dialog.Title className="text-sm font-bold text-foreground">Ngắt kết nối tài khoản?</Dialog.Title>
+            <p className="text-xs text-muted-foreground mt-2">
               Bạn có chắc muốn gỡ bỏ liên kết dịch vụ này? AI sẽ không thể truy xuất và chỉ mục dữ liệu mới từ nguồn này nữa.
             </p>
             <div className="flex justify-end gap-2 mt-4 pt-2">
               <button
                 onClick={() => setConfirmDeleteId(null)}
-                className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-secondary text-[10px] font-bold cursor-pointer"
+                className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-secondary text-xs font-bold cursor-pointer"
               >
                 Hủy
               </button>
               <button
                 onClick={() => handleDeleteConfirm(confirmDeleteId!)}
-                className="px-2.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-bold shadow-premium-sm cursor-pointer"
+                className="px-2.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold shadow-premium-sm cursor-pointer"
               >
                 Xác nhận gỡ
               </button>
